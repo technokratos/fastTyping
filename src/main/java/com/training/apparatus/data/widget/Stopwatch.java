@@ -5,18 +5,26 @@ public class Stopwatch {
     private long timer_r;
     private long timer_f;
 
+    private boolean start = false;
+
     public Stopwatch() {
 
     }
 
     public void start() {
-        timer_s = System.currentTimeMillis();
-        timer_f = timer_s;
+        if (!start) {
+            timer_s = System.currentTimeMillis();
+            timer_f = timer_s;
+            start = true;
+        }
     }
 
     public void stop() {
-        timer_f = System.currentTimeMillis();
-        timer_r = timer_f - timer_s;
+        if (start) {
+            timer_f = System.currentTimeMillis();
+            timer_r = timer_f - timer_s;
+            start = false;
+        }
     }
 
     public double getResultSec() {
@@ -25,5 +33,17 @@ public class Stopwatch {
 
     public double  getResultMin() {
         return (double)timer_r / 1000 / 60;
+    }
+
+    public double getCurrentTimeSec() {
+        if (start) {
+            return (System.currentTimeMillis() - timer_s)/1000.0;
+        } else {
+            return 0.0;
+        }
+    }
+
+    public boolean isStarted() {
+        return start;
     }
 }

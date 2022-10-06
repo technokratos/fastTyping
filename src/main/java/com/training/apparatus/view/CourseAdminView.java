@@ -1,12 +1,16 @@
 package com.training.apparatus.view;
 
+import com.training.apparatus.data.entity.Result;
+import com.training.apparatus.data.entity.Role;
+import com.training.apparatus.data.entity.Task;
+import com.training.apparatus.data.entity.Type;
+import com.training.apparatus.data.entity.User;
 import com.training.apparatus.data.repo.ResultRepository;
 import com.training.apparatus.data.repo.TaskRepository;
 import com.training.apparatus.data.service.ResultService;
 import com.training.apparatus.data.service.UserService;
 import com.training.apparatus.data.widget.Stopwatch;
 import com.training.apparatus.secutiy.SecurityService;
-import com.training.apparatus.data.entity.*;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -26,12 +30,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-
-
-import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import javax.annotation.security.PermitAll;
 
 @PermitAll
 @Route(value = "course", layout =  MainLayout.class)
@@ -66,6 +67,8 @@ public class CourseAdminView extends VerticalLayout {
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         setAuth();
         add( addHorizTables() );
+        title = new Label("You haven't completed this quest yet");
+        textArea = new TextArea();
         HorizontalLayout layout = new HorizontalLayout(addVerticalTables(), addSimulator());
         layout.setSizeFull();
         add(layout);
@@ -119,10 +122,9 @@ public class CourseAdminView extends VerticalLayout {
         VerticalLayout layout = new VerticalLayout();
         // при старте тут вылетает ошибка, так как может не быть выбранных объектов
 
-        title = new Label("You haven't completed this quest yet");
+        title.setText("You haven't completed this quest yet");
         layout.add(title);
 
-        textArea = new TextArea();
         textArea.setWidth("85%");
         textArea.setHeight("75%");
         textArea.setValueChangeMode(ValueChangeMode.EAGER);
@@ -167,7 +169,7 @@ public class CourseAdminView extends VerticalLayout {
 //                .map(r -> r.getTask().getType() + " " + r.getTask().getNumber()).collect(Collectors.toList());
         if(size.isPresent()) {
             for (int i = 0; i < size.get(); i++) {
-                String nameTab = name + " " + String.valueOf(i + 1);
+                String nameTab = name + " " + (i + 1);
                 Tab tab;
                 if(namesTab.contains(nameTab)) {
                     tab = new Tab(
@@ -188,7 +190,7 @@ public class CourseAdminView extends VerticalLayout {
     }
 
     public void updateSimulator() {
-        if(columnTabs.getChildren().collect(Collectors.toList()).size() == 0) {
+        if(columnTabs.getChildren().toList().size() == 0) {
             title.setText("You haven't completed this quest yet");
             textArea.setValue("The text for typing is not ready yet");
             return;
@@ -217,9 +219,9 @@ public class CourseAdminView extends VerticalLayout {
     public void save() {
         Span span = columnTabs.getSelectedTab().getChildren().filter(tab -> tab instanceof Span)
                 .map(tab -> (Span)tab).findFirst().get();
-        String str[] = span.getText().split(" ");
+        String[] str = span.getText().split(" ");
         String type = str[0];
-        long number = Long.valueOf(str[1]);
+        long number = Long.parseLong(str[1]);
         Optional<Task> task = taskRepository.findByNumberAndType(type, number);
         if (task.isPresent()) {
             task.get().setText(textArea.getValue());
@@ -228,7 +230,7 @@ public class CourseAdminView extends VerticalLayout {
             Task t = new Task();
             t.setText(textArea.getValue());
             t.setType(getType(headerTabs.getSelectedTab().getLabel()));
-            long size = taskRepository.getSizeByType(headerTabs.getSelectedTab().getLabel()).orElse(Long.valueOf(0)) + 1;
+            long size = taskRepository.getSizeByType(headerTabs.getSelectedTab().getLabel()).orElse(0L) + 1;
             t.setNumber(size);
             taskRepository.save(t);
             updateVerticalTables();
@@ -251,10 +253,10 @@ public class CourseAdminView extends VerticalLayout {
 
     public void addElement() {
         String name = headerTabs.getSelectedTab().getLabel();
-        long size = taskRepository.getSizeByType(name).orElse(Long.valueOf(0));
+        long size = taskRepository.getSizeByType(name).orElse(0L);
         Tab tab = new Tab(
                 VaadinIcon.CLOSE_CIRCLE.create(),
-                new Span(name + " " + String.valueOf(size + 1))
+                new Span(name + " " + (size + 1))
         );
         columnTabs.add(tab);
         //columnTabs.setSelectedTab(tab);
@@ -316,9 +318,7 @@ public class CourseAdminView extends VerticalLayout {
         Button closeButton = new Button(new Icon("lumo", "cross"));
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         closeButton.getElement().setAttribute("aria-label", "Close");
-        closeButton.addClickListener(event -> {
-            notification.close();
-        });
+        closeButton.addClickListener(event -> notification.close());
 
         HorizontalLayout layout = new HorizontalLayout(div, closeButton);
         layout.setAlignItems(Alignment.CENTER);

@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: training-postgres
+    image: "postgres:13"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: GOOzBg
+      POSTGRES_DB: TrainingApparatus
+    networks:
+      training_net:
+        aliases:
+          - localhost
+    ports:
+      - "5432:5432"
+    volumes:
+      - /opt/TrainingApparatus/postgres:/var/lib/postgresql/data
+#      - /opt/TrainingApparatus/init_sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  app:
+    image: openjdk:17
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - ../builds:/opt/app
+#      - ../frontend:/opt/app/frontend
+    ports:
+      - "8080:8080"
+    networks:
+      training_net:
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/TrainingApparatus
+#    command: tail -F anything
+    command: bash -c "cd /opt/app && java -Dvaadin.productionMode=true -jar ProjectVaadin-0.0.1-SNAPSHOT.jar"
+networks:
+  training_net:

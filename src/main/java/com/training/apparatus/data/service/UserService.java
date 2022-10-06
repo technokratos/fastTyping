@@ -2,9 +2,11 @@ package com.training.apparatus.data.service;
 
 import com.training.apparatus.data.dto.UserDto;
 import com.training.apparatus.data.entity.Group;
+import com.training.apparatus.data.entity.Result;
 import com.training.apparatus.data.entity.User;
 import com.training.apparatus.data.repo.UserRepository;
 import com.training.apparatus.secutiy.SecurityService;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -46,11 +48,10 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        UserDetails auth = org.springframework.security.core.userdetails.User
+        return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
                 .authorities(user.getRole().name()).build();
-        return auth;
     }
 
     @Transactional
@@ -67,7 +68,11 @@ public class UserService implements UserDetailsService {
     public List<String> getMapResultInTask(User auth) {
         User user = userRepository.findByEmail(auth.getEmail());
         return user.getResults().stream()
-                .map(r -> r.getTask().getType() + " " + r.getTask().getNumber()).collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .map(Result::getTask)
+                .filter(Objects::nonNull)
+                .map(task -> task.getType() + " " + task.getNumber())
+                .collect(Collectors.toList());
     }
 
     public Group getGroup(String email) {

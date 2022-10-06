@@ -13,6 +13,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import java.util.Optional;
 import javax.annotation.security.PermitAll;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,10 +42,12 @@ public class TheoreticalBackgroundView  extends VerticalLayout {
     private void configurePage() {
         ComboBoxListDataView<TheoreticalTopic> topics = comboBox.setItems(theoreticalTopicService.getTheoreticalTopics());
         comboBox.setItemLabelGenerator(TheoreticalTopic::getNameTopic);
-        currentTopicId = theoreticalTopicService.getTheoreticalTopics().stream()
-                        .findFirst().get().getId();
+        Optional<TheoreticalTopic> theoreticalTopicOptional = theoreticalTopicService.getTheoreticalTopics().stream()
+                .findFirst();
+        currentTopicId = theoreticalTopicOptional.map(TheoreticalTopic::getId).orElse(0L);
         configureDownLayout();
-        TheoreticalTopic firstTopic = topics.getItems().findFirst().get();
+
+
 
         comboBox.setWidth("60%");
         textArea.setWidth("60%");
@@ -58,7 +61,10 @@ public class TheoreticalBackgroundView  extends VerticalLayout {
             Long idTopic = theoreticalTopicService.findTopicByName(topic.getNameTopic()).getId();
             updateButton(idTopic);
         });
-        if(firstTopic != null) {
+
+        Optional<TheoreticalTopic> firstTopicOptional = topics.getItems().findFirst();
+        if(firstTopicOptional.isPresent()) {
+            TheoreticalTopic firstTopic = firstTopicOptional.get();
             comboBox.setValue(firstTopic);
             updateButton(firstTopic.getId());
         }
@@ -76,7 +82,7 @@ public class TheoreticalBackgroundView  extends VerticalLayout {
 
         });
         horizontalLayout.add(horizontalButtons, buttonSave);
-    };
+    }
 
     private void updateButton(long id) {
         int count = theoreticalTopicService.getCountPageByIdTopic(id);
@@ -93,7 +99,7 @@ public class TheoreticalBackgroundView  extends VerticalLayout {
             }
             horizontalButtons.add(button);
         }
-        List<Component> componentList = horizontalButtons.getChildren().collect(Collectors.toList());
+        List<Component> componentList = horizontalButtons.getChildren().toList();
 
         if(componentList.size() > 1) {
             TheoreticalTopic topic = comboBox.getValue();

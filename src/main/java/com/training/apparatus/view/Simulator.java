@@ -6,9 +6,14 @@ import com.training.apparatus.data.widget.Stopwatch;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -19,28 +24,34 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
+import java.util.List;
+import javax.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.security.PermitAll;
-
 @PermitAll
-@Route(value = "", layout =  MainLayout.class)
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Training apparatus")
-public class Simulator  extends VerticalLayout {
+public class Simulator extends VerticalLayout {
     @Autowired
     private ResultService resultService;
 
     private String text = "Миллионы людей совершали друг против друга такое бесчисленное количество злодеяний, обманов, измен, воровства, подделок и выпуска фальшивых ассигнаций, грабежей, поджогов и убийств, которого в целые века не соберет летопись всех судов мира и на которые, в этот период времени, люди, совершавшие их, не смотрели как на преступления.";
     TextField textField;
     TextArea textArea;
+
+    Label resultLabel;
     Stopwatch stopwatch = new Stopwatch();
-    Boolean flag = false;
     Integer count = 0;
+    Div imageContainer;
 
 
     public Simulator() {
         setSizeFull();
-        /*Button button = new Button("I'm a button");*/
+
+
+        initMap();
+
         textArea = new TextArea();
         textArea.setReadOnly(true);
         textArea.setValue(text);
@@ -48,68 +59,68 @@ public class Simulator  extends VerticalLayout {
         textField = new TextField("start typing");
         textField.setWidth("60%");
         textField.setValueChangeMode(ValueChangeMode.EAGER);
+        resultLabel = new Label();
+
         //textField.addThemeVariants();
-        add(/*button, */textArea, textField);
+        add(imageContainer, textArea, textField, resultLabel);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         Key key = Key.of("f");
-        textField.addKeyUpListener(key,null, KeyModifier.SHIFT);
+        textField.addKeyUpListener(key, null, KeyModifier.SHIFT);
 
-        /*TextField valueChange = new TextField("addValueChangeListener");
-        TextField inputL = new TextField("addInputListener");
-        TextField attachL = new TextField("addAttachListener");*/
-        //HorizontalLayout layout1 = new HorizontalLayout(valueChange, inputL, attachL);
-
-        /*final int[] value = {0};
-        textField.addValueChangeListener(e -> {
-            value[0]++; valueChange.setValue(" " + value[0]);});
-        final int[] input = {0};
-        final int[] index = {0};
-
-        textField.addInputListener(e -> {
-
-            //index[0]++; textField.setValue(" " + input[0]);
-            input[0]++; inputL.setValue(" " + textField.getValue().length());});
-
-        final int[] attach = {0};
-        textField.addAttachListener(e -> {
-            attach[0]++; attachL.setValue(" " + attach[0]);});*/
-
-        /*TextField keyDown = new TextField("addKeyDownListener");
-        TextField keyPress = new TextField("addKeyPressListener");
-        TextField keyUp = new TextField("addKeyUpListener");
-        HorizontalLayout layout3 = new HorizontalLayout(keyDown, keyPress, keyUp);*/
-
-        /*final int[] down = {0};
-        textField.addKeyDownListener(e -> {
-            down[0]++; keyDown.setValue(" " + textField.getValue().length());});*/
-        final int[] press = {0};
         textField.addKeyPressListener(e -> {
             startTimer();
             incCount();
-            if(textField.getValue().length() != 0)
+            if (textField.getValue().length() != 0)
                 checkForCorrection(1);
-            press[0]++; //  keyPress.setValue(" " + textField.getValue().length());
+            updateResult();
             stopTimer();
         });
+    }
 
-        /*final int[] up = {0};
-        Binder<TextField> binder = new Binder<>();
+    private void initMap() {
+        List<KeyboardMap> maps = List.of(
+                new KeyboardMap("Плоская карта(рус.)", "keyboard_maps/map_rus.png"),
+                new KeyboardMap("Пирамида(рус.)", "keyboard_maps/piramid_rus.png"),
+                new KeyboardMap("Пирамида(англ.)", "keyboard_maps/piramid_eng.png"),
+                new KeyboardMap("Симметричная пирамида(рус.)", "keyboard_maps/piramid_sym_rus.png"),
+                new KeyboardMap("Симметричная пирамида(англ.)", "keyboard_maps/piramid_sym_eng.png"));
 
-        textField.addKeyUpListener(e -> {
-            up[0]++; keyUp.setValue(" "  + up[0]);});*/
 
-        //add(layout1, layout3);
+        imageContainer = new Div();
+        ContextMenu menu = new ContextMenu();
+        menu.setTarget(imageContainer);
+        ComboBox<KeyboardMap> mapComboBox = new ComboBox<>("Карта клавиатуры", maps);
+        menu.add(mapComboBox);
+        imageContainer.add(maps.iterator().next().image);
+        mapComboBox.setValue(maps.iterator().next());
+
+        mapComboBox.addValueChangeListener(e -> {
+            imageContainer.removeAll();
+            imageContainer.add(e.getValue().image);
+        });
+    }
+
+    private void updateResult() {
+        double currentTimeSec = stopwatch.getCurrentTimeSec();
+        if (stopwatch.isStarted() && currentTimeSec > 0) {
+            int length = textField.getValue().length();
+            double charInMinutes = length / currentTimeSec / 60.0;
+            int baseTextLength = textArea.getValue().length();
+            int errors = count - length;
+//            double errorRate = 100.0 * errors / baseTextLength; //, %.2f %%
+            resultLabel.setText("%.2f зн/мин, %d из %d, ошибок %d".formatted(charInMinutes, length, baseTextLength, errors));
+        }
     }
 
     public void checkForCorrection(int ind) {
         String filed = textField.getValue();
-        char chInput = filed.charAt(filed.length()-ind);
-        char chComp = text.charAt(filed.length()-ind);
-        if(chInput == chComp) {
+        char chInput = filed.charAt(filed.length() - ind);
+        char chComp = text.charAt(filed.length() - ind);
+        if (chInput == chComp) {
             String sub = filed.substring(0, filed.length() - ind + 1);
             textField.setValue(sub);
         } else {
-            if(filed.length()-ind == 0) {
+            if (filed.length() - ind == 0) {
                 String sub = filed.substring(0, filed.length() - ind);
                 textField.setValue(sub);
                 return;
@@ -119,17 +130,14 @@ public class Simulator  extends VerticalLayout {
     }
 
     public void startTimer() {
-        if(flag == false) {
-            stopwatch.start();
-        }
+        stopwatch.start();
     }
 
     public void stopTimer() {
         String str = textField.getValue();
-        if(text.length() == str.length() &&
-            text.charAt(text.length() - 1) == str.charAt(str.length() - 1)) {
+        if (text.length() == str.length() &&
+                text.charAt(text.length() - 1) == str.charAt(str.length() - 1)) {
             stopwatch.stop();
-            flag = false;
             textField.setValue("");
             generateResult();
             count = 0;
@@ -137,8 +145,10 @@ public class Simulator  extends VerticalLayout {
     }
 
     public void generateResult() {
+        resultLabel.setText("");
         Notification notification = new Notification();
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        notification.setDuration(5000);
         Result result = resultService.create(count, text.length(), stopwatch.getResultMin());
 
         String str = "Тренировка прошла успешно!\n" + "Ваша скорость: "
@@ -149,9 +159,7 @@ public class Simulator  extends VerticalLayout {
         Button closeButton = new Button(new Icon("lumo", "cross"));
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         closeButton.getElement().setAttribute("aria-label", "Close");
-        closeButton.addClickListener(event -> {
-            notification.close();
-        });
+        closeButton.addClickListener(event -> notification.close());
 
         HorizontalLayout layout = new HorizontalLayout(div, closeButton);
         layout.setAlignItems(Alignment.CENTER);
@@ -165,5 +173,24 @@ public class Simulator  extends VerticalLayout {
         count++;
     }
 
+    static class KeyboardMap {
+        private final String name;
+        private final Image image;
+
+
+        KeyboardMap(String name, String fileName) {
+            this.name = name;
+            //StreamResource res = new StreamResource("keyboard-map.png", () -> Simulator.class.getClassLoader().getResourceAsStream("keyboard_maps/map_rus.png"));
+            StreamResource res = new StreamResource(fileName.substring(fileName.indexOf("/") + 1), () -> Simulator.class.getClassLoader().getResourceAsStream(fileName));
+            image = new Image(res, "Карта клавиатуры");
+            image.setWidth(1024, Unit.PIXELS);
+
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 
 }
