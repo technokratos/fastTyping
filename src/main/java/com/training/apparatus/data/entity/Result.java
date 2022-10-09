@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Results")
+@Table(name = "Results", indexes = {
+        @Index(name = "ByUserAndTask_IDX", columnList = "user_id, task_id")
+})
 @Getter
 @Setter
 public class Result {
@@ -23,6 +25,8 @@ public class Result {
     private int speed;
 
     private double mistakes;
+
+    private int totalSymbols;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

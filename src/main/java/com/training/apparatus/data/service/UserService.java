@@ -2,23 +2,19 @@ package com.training.apparatus.data.service;
 
 import com.training.apparatus.data.dto.UserDto;
 import com.training.apparatus.data.entity.Group;
-import com.training.apparatus.data.entity.Result;
 import com.training.apparatus.data.entity.User;
 import com.training.apparatus.data.repo.UserRepository;
 import com.training.apparatus.secutiy.SecurityService;
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -62,17 +58,6 @@ public class UserService implements UserDetailsService {
             userRepository.save(user.get());
         }
 
-    }
-
-    @Transactional
-    public List<String> getMapResultInTask(User auth) {
-        User user = userRepository.findByEmail(auth.getEmail());
-        return user.getResults().stream()
-                .filter(Objects::nonNull)
-                .map(Result::getTask)
-                .filter(Objects::nonNull)
-                .map(task -> task.getType() + " " + task.getNumber())
-                .collect(Collectors.toList());
     }
 
     public Group getGroup(String email) {

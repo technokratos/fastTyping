@@ -1,16 +1,17 @@
 package com.training.apparatus.data.entity;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "Tasks")
+@Table(name = "Tasks", indexes = {
+        @Index(name = "ByTypeAndLanguageIdx", columnList = "type, language"),
+        @Index(name = "ByTypeAndLanguageAndNumberIdx", columnList = "type, language, number", unique = true)})
 @Getter
 @Setter
 public class Task {
@@ -19,46 +20,41 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     Type type;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    Language language;
+
+    @NotNull
     Long number;
+    @NotNull
+    String title;
 
+    @NotNull
     @Size(max =  1000)
-    String text;
+    private String text;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<Result> results = new HashSet<>();
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "blob_image_id")
+//    BlobImage blobImage;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    User user;
 
-    public Task() {
-
-    }
-
-    public Task(Type type, Long number, String text) {
-        this.type = type;
-        this.number = number;
-        this.text = text;
-    }
-
-    public void addResult(Result result){
-        this.results.add(result);
-        result.setTask(this);
-    }
-    public void removeTask(Result result){
-        this.results.remove(result);
-        result.setTask(null);
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && type == task.type && Objects.equals(number, task.number) && Objects.equals(text, task.text);
+        return id == task.id && type == task.type && language == task.language && Objects.equals(number, task.number) && Objects.equals(title, task.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, number, text);
+        return Objects.hash(id, type, language, number, title);
     }
 }

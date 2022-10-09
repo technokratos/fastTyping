@@ -7,14 +7,10 @@ import com.training.apparatus.data.repo.ResultRepository;
 import com.training.apparatus.data.repo.TaskRepository;
 import com.training.apparatus.data.repo.UserRepository;
 import com.training.apparatus.secutiy.SecurityService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ResultService {
@@ -43,22 +39,14 @@ public class ResultService {
     }
 
     @Transactional
-    public Result save(long count, long length, double min, String type, long number) {
+    public Result save(Task task, Double mistakes, double speed, int length, User user) {
         Result result = new Result();
-        String mistakes = new DecimalFormat("#0.00")
-                .format((double)length / count * 100).replace(",", ".");
-        result.setMistakes(Double.valueOf(mistakes));
-        result.setSpeed((int)(count / min * 60));
+        result.setMistakes(mistakes);
+        result.setSpeed((int) speed);
         result.setTime(LocalDateTime.now());
-        UserDetails userAuth = securityService.getAuthenticatedUser();
-        User user = userRepository.findByEmail(userAuth.getUsername());
-        user.getResults().size();
-        user.addResult(result);
-        Optional<Task> task = taskRepository.findByNumberAndType(type, number);
-        if(task.isPresent()) {
-            task.get().addResult(result);
-            userRepository.save(user);
-        }
-        return result;
+        result.setTotalSymbols(length);
+        result.setTask(task);
+        result.setUser(user);
+        return resultRepository.save(result);
     }
 }
