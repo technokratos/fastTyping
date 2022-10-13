@@ -32,7 +32,7 @@ services:
       - ../builds:/opt/app
 #      - ../frontend:/opt/app/frontend
     ports:
-      - "8080:8080"
+      - "80:8080"
     networks:
       training_net:
     environment:
