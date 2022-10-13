@@ -11,7 +11,7 @@ import com.training.apparatus.data.repo.TaskRepository;
 import com.training.apparatus.data.service.ResultService;
 import com.training.apparatus.data.service.UserService;
 import com.training.apparatus.secutiy.SecurityService;
-import com.training.apparatus.view.components.TypingBlock;
+import com.training.apparatus.view.components. TypingWithCommandsBlock;
 import com.vaadin.componentfactory.ToggleButton;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -50,7 +50,7 @@ public class CourseView extends VerticalLayout {
     User auth;
     Label title;
 
-    private final TypingBlock typingBlock;
+    private final  TypingWithCommandsBlock typingBlock;
     private final TextArea textArea;
 
     private final Map<Tab, Task> tabTaskMap = new HashMap<>();
@@ -68,7 +68,7 @@ public class CourseView extends VerticalLayout {
         title = new Label("");
         textArea = new TextArea();
         textArea.setSizeFull();
-        typingBlock = new TypingBlock();
+        typingBlock = new  TypingWithCommandsBlock();
         add(addHorizTables());
         typingBlock.addResultListener(this::addResult);
         HorizontalLayout layout = new HorizontalLayout(addVerticalTables(), typingBlock);
@@ -241,7 +241,7 @@ public class CourseView extends VerticalLayout {
     }
 
 
-    private void addResult(TypingBlock.TypingResult typingResult) {
+    private void addResult( TypingWithCommandsBlock.TypingResult typingResult) {
         Task task = getSelectedTask();
         Tab selectedTab = lessonTabs.getSelectedTab();
         Optional<Component> iconOptional = selectedTab.getChildren().filter(it -> it instanceof Icon).findFirst();

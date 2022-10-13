@@ -45,7 +45,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink listLink = new RouterLink("Training Apparatus", Simulator.class);
+        RouterLink listLink = new RouterLink("Training Apparatus", DemoView.class);
         RouterLink course = new RouterLink("Course", CourseView.class);
         RouterLink generation = new RouterLink("Generation", GenerationView.class);
 //        RouterLink theoretical = new RouterLink("Theoretical", TheoreticalBackgroundView.class);

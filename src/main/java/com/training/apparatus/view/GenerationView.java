@@ -8,7 +8,7 @@ import com.training.apparatus.data.text.TextGenerator;
 import com.training.apparatus.data.text.data.BaseText;
 import com.training.apparatus.data.text.data.GenerationParameter;
 import com.training.apparatus.secutiy.SecurityService;
-import com.training.apparatus.view.components.TypingBlock;
+import com.training.apparatus.view.components. TypingWithCommandsBlock;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -30,13 +30,13 @@ public class GenerationView extends VerticalLayout {
     private final User auth;
 
     private final TextGeneratorFactory generatorFactory;
-    private final TypingBlock typingBlock;
+    private final  TypingWithCommandsBlock typingBlock;
     private final ComboBox<GeneratorType> generatorTypeComboBox;
     private final ComboBox<Integer> ngramCombox;
 
     private final IntegerField lengthTextField;
-    private final Integer maxLimit = 10000;
-    private final Integer minLimit = 5;
+    private final static Integer MAX_LIMIT = 10000;
+    private final static Integer MIN_LIMIT = 5;
 
     public GenerationView(SecurityService securityService, UserService userService, TextGeneratorFactory generatorFactory) {
         auth = securityService.getAuthUser();
@@ -45,7 +45,7 @@ public class GenerationView extends VerticalLayout {
         this.generatorFactory = generatorFactory;
         addClassName("generation-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        typingBlock = new TypingBlock();
+        typingBlock = new  TypingWithCommandsBlock();
         typingBlock.setSizeFull();
 
         generatorTypeComboBox = new ComboBox<>("Type of generation", GeneratorType.values());
@@ -87,8 +87,8 @@ public class GenerationView extends VerticalLayout {
             Notification.show("Empty of " + lengthTextField.getLabel(), 3, Notification.Position.MIDDLE);
             return;
         }
-        if (length < minLimit || length > maxLimit) {
-            Notification.show("Exceed limits %s. It should be in range %d..%d".formatted(lengthTextField.getLabel(), minLimit, maxLimit), 3, Notification.Position.MIDDLE);
+        if (length < MIN_LIMIT || length > MAX_LIMIT) {
+            Notification.show("Exceed limits %s. It should be in range %d..%d".formatted(lengthTextField.getLabel(), MIN_LIMIT, MAX_LIMIT), 3, Notification.Position.MIDDLE);
             return;
         }
 

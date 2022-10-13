@@ -22,32 +22,12 @@ public class FingerCommandService {
     private final Map<Locale, Map<Character, Command>> localeMap = new HashMap<>();
 
 
-    private Map<Character, Command> russianCommands;
+    private final Map<Character, Command> russianCommands;
 
     public static final char ABSENT = (char) 0;
 
     {
         russianCommands = new HashMap<>();
-//        fingerCommandMap.put('5', new Command(false, LeftHand, First, Right, UpTwice));
-//        fingerCommandMap.put('е', new Command(false, LeftHand, First, Right, Up));
-//        fingerCommandMap.put('п', new Command(false, LeftHand, First, Right, InPlace));
-//        fingerCommandMap.put('и', new Command(false, LeftHand, First, Right, Down));
-//
-//        fingerCommandMap.put('%', new Command(true, LeftHand, First, Right, UpTwice));
-//        fingerCommandMap.put('Е', new Command(true, LeftHand, First, Right, Up ));
-//        fingerCommandMap.put('П', new Command(true, LeftHand, First, Right, InPlace));
-//        fingerCommandMap.put('И', new Command(true, LeftHand, First, Right, Down));
-//
-//        fingerCommandMap.put('4', new Command(false, LeftHand, First, UpTwice));
-//        fingerCommandMap.put('к', new Command(false, LeftHand, First, Up));
-//        fingerCommandMap.put('а', new Command(false, LeftHand, First, InPlace));
-//        fingerCommandMap.put('м', new Command(false, LeftHand, First, Down));
-//
-//        fingerCommandMap.put('$', new Command(true, LeftHand, First, UpTwice));
-//        fingerCommandMap.put('К', new Command(true, LeftHand, First, Up));
-//        fingerCommandMap.put('А', new Command(true, LeftHand, First, InPlace));
-//        fingerCommandMap.put('М', new Command(true, LeftHand, First, Down));
-
 
         Map<List<Character>, GenCommand> map = new HashMap<>();
         map.put(List.of('5', 'е' ,'п', 'и'), new GenCommand(LeftHand, First,false, Right));
@@ -69,36 +49,40 @@ public class FingerCommandService {
 //        map.put(List.of('~', ABSENT ,ABSENT, '|'), new GenCommand(LeftHand, Fourth,true, Left));
 
 
-        map.put(List.of('6', 'н' ,'р', 'т'), new GenCommand(LeftHand, First,false, Left));
-        map.put(List.of(':', 'Н' ,'Р', 'Т'), new GenCommand(LeftHand, First,true, Left));
+        map.put(List.of('6', 'н' ,'р', 'т'), new GenCommand(RightHand, First,false, Left));
+        map.put(List.of(':', 'Н' ,'Р', 'Т'), new GenCommand(RightHand, First,true, Left));
 
-        map.put(List.of('7', 'г' ,'о', 'ь'), new GenCommand(LeftHand, First,false));
-        map.put(List.of('?', 'Г' ,'О', 'Ь'), new GenCommand(LeftHand, First,true));
+        map.put(List.of('7', 'г' ,'о', 'ь'), new GenCommand(RightHand, First,false));
+        map.put(List.of('?', 'Г' ,'О', 'Ь'), new GenCommand(RightHand, First,true));
 
-        map.put(List.of('8', 'ш' ,'л', 'с'), new GenCommand(LeftHand, Second, false));
-        map.put(List.of('*', 'Ш' ,'Л', 'С'), new GenCommand(LeftHand, Second, true));
+        map.put(List.of('8', 'ш' ,'л', 'с'), new GenCommand(RightHand, Second, false));
+        map.put(List.of('*', 'Ш' ,'Л', 'С'), new GenCommand(RightHand, Second, true));
 
-        map.put(List.of('9', 'щ' ,'д', 'ю'), new GenCommand(LeftHand, Third, false));
-        map.put(List.of('(', 'Щ' ,'Д', 'Ю'), new GenCommand(LeftHand, Third,true));
+        map.put(List.of('9', 'щ' ,'д', 'ю'), new GenCommand(RightHand, Third, false));
+        map.put(List.of('(', 'Щ' ,'Д', 'Ю'), new GenCommand(RightHand, Third,true));
 
-        map.put(List.of('0', 'з' ,'ж', '.'), new GenCommand(LeftHand, Fourth, false));
-        map.put(List.of(')', 'З' ,'Ж', ','), new GenCommand(LeftHand, Fourth, true));
+        map.put(List.of('0', 'з' ,'ж', '.'), new GenCommand(RightHand, Fourth, false));
+        map.put(List.of(')', 'З' ,'Ж', ','), new GenCommand(RightHand, Fourth, true));
 
-        map.put(List.of('-', 'х' , 'э', ABSENT), new GenCommand(LeftHand, Fourth, false, Right));
-        map.put(List.of('_', 'Х' , 'Э', ABSENT), new GenCommand(LeftHand, Fourth, true, Right));
+        map.put(List.of('-', 'х' , 'э', ABSENT), new GenCommand(RightHand, Fourth, false, Right));
+        map.put(List.of('_', 'Х' , 'Э', ABSENT), new GenCommand(RightHand, Fourth, true, Right));
 
-        map.put(List.of('=', 'ъ' , '\\', ABSENT), new GenCommand(LeftHand, Fourth, false, RightTwice));
-        map.put(List.of('+', 'Ъ', '|', ABSENT), new GenCommand(LeftHand, Fourth, true, RightTwice));
+        map.put(List.of('=', 'ъ' , '\\', ABSENT), new GenCommand(RightHand, Fourth, false, RightTwice));
+        map.put(List.of('+', 'Ъ', '|', ABSENT), new GenCommand(RightHand, Fourth, true, RightTwice));
 
         map.put(List.of(ABSENT, ABSENT, ' ', ABSENT), new GenCommand(RightHand, Zero, false));
 
         List<Position> positions = List.of(UpTwice, Up, InPlace, Down);
         map.forEach((characters, genCommand) -> {
-            russianCommands.put('5', new Command(false, LeftHand, First, Right, UpTwice));
+
             for (int i = 0; i < characters.size(); i++) {
                 Character key = characters.get(i);
                 if (key != ABSENT) {
-                    russianCommands.put(key, new Command(genCommand.shift, genCommand.hand, genCommand.finger, positions.get(i)));
+                    if (genCommand.additionalPosition != null) {
+                        russianCommands.put(key, new Command(genCommand.shift, genCommand.hand, genCommand.finger, genCommand.additionalPosition, positions.get(i)));
+                    } else {
+                        russianCommands.put(key, new Command(genCommand.shift, genCommand.hand, genCommand.finger, positions.get(i)));
+                    }
                 }
             }
         });

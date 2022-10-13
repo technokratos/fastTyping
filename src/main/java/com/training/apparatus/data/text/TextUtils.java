@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,7 +44,7 @@ public class TextUtils {
             if (inputStream == null) {
                 throw new TextGenerationException("File %s is absent".formatted(fileName));
             }
-            CharacterSetFilterReader filteredReader = new CharacterSetFilterReader(new InputStreamReader(inputStream, UTF_8), Stream.of('&', '#', '<', '>', '_', '`', '\'','/')
+            CharacterSetFilterReader filteredReader = new CharacterSetFilterReader(new InputStreamReader(inputStream, UTF_8), Stream.of('&', '#', '<', '>', '_', '`', '\'','/', '[', ']')
                     .map(it -> (int) it).collect(Collectors.toSet()));
             return CharStreams.toString(filteredReader);
         } catch (IOException e) {
@@ -103,7 +102,7 @@ public class TextUtils {
                     firstNgram += nextLetter;
                 }
             }
-        } while (count < text.length() - 1 && (firstNgram == null || firstNgram != null && firstNgram.length() < ngramsize));
+        } while (count < text.length() - 1 && (firstNgram == null || firstNgram.length() < ngramsize));
 
         if (firstNgram == null) {
             return Collections.emptyMap();
@@ -203,7 +202,7 @@ public class TextUtils {
                 return new WeightedSample<>(p.sample(), wordWeight + p.weight() - wordWeight * p.weight());
             }
         }).toList();
-        double sum = weightedPairs.stream().mapToDouble(stringWeightedSample -> stringWeightedSample.weight()).sum();
+        double sum = weightedPairs.stream().mapToDouble(WeightedSample::weight).sum();
         if (sum == 0.0) {
             return histogram;
         }
@@ -258,7 +257,7 @@ public class TextUtils {
                 }
                 firstNgram.add(nextWord);
             }
-        } while (tokenizer.hasMoreElements() && (firstNgram == null || firstNgram != null && firstNgram.size() < ngramsize));
+        } while (tokenizer.hasMoreElements() && (firstNgram == null || firstNgram.size() < ngramsize));
 
         if (firstNgram == null) {
             return Collections.emptyMap();
@@ -279,11 +278,11 @@ public class TextUtils {
                 countMap.compute(next, (key, oldValue) -> (oldValue == null) ? 1 : oldValue + 1);
                 current.pollFirst();
                 current.add(next);
-            } else if (ignore) {
-                // current  = new LinkedList<>();
-            } else {
+            } else if (!ignore) {
                 current.add(next);
             }
+            //ignore next
+
 
         }
 
