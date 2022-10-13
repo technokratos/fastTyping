@@ -47,7 +47,8 @@ public class MainLayout extends AppLayout {
     private void createDrawer() {
         RouterLink listLink = new RouterLink("Training Apparatus", Simulator.class);
         RouterLink course = new RouterLink("Course", CourseView.class);
-        RouterLink theoretical = new RouterLink("Theoretical", TheoreticalBackgroundView.class);
+        RouterLink generation = new RouterLink("Generation", GenerationView.class);
+//        RouterLink theoretical = new RouterLink("Theoretical", TheoreticalBackgroundView.class);
         //RouterLink dashboard = new RouterLink("Dashboard", DashboardView.class);
         RouterLink profile = new RouterLink("Profile", ProfileView.class);
         RouterLink worker = null;
@@ -61,11 +62,11 @@ public class MainLayout extends AppLayout {
 
         if(worker == null) {
             addToDrawer(new VerticalLayout(
-                    listLink, course, theoretical, /*dashboard,*/ profile
+                    listLink, course, generation,  /*theoretical, dashboard,*/ profile
             ));
         } else {
             addToDrawer(new VerticalLayout(
-                    listLink, course, theoretical, /*dashboard,*/ profile, worker
+                    listLink, course, generation,  /*theoretical, dashboard,*/ profile, worker
             ));
         }
 

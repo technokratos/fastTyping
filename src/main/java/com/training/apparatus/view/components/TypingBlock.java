@@ -47,13 +47,12 @@ public class TypingBlock extends VerticalLayout {
         textArea = new TextArea();
         textArea.setReadOnly(true);
         textArea.setValue(text);
-        textArea.setWidth("60%");
-        textField = new TextField("start typing");
+        textArea.setWidth("100%");
+        textField = new TextField("Input text", "Start typing" );
         textField.setWidth("60%");
         textField.setValueChangeMode(ValueChangeMode.EAGER);
         resultLabel = new Label();
 
-        //textField.addThemeVariants();
         add(imageContainer, textArea, textField, resultLabel);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         Key key = Key.of("f");
@@ -62,8 +61,17 @@ public class TypingBlock extends VerticalLayout {
         textField.addKeyPressListener(e -> {
             startTimer();
             incCount();
-            if (textField.getValue().length() != 0)
-                checkForCorrection(1);
+            if (textField.getValue().length() != 0) {
+                String correctionChars = checkForCorrection(1);
+                if (correctionChars != null) {
+                    Notification notification = new Notification();
+                    notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    notification.setDuration(1000);
+                    notification.setPosition(Notification.Position.BOTTOM_CENTER);
+                    notification.add(correctionChars);
+                    notification.open();
+                }
+            }
             updateResult();
             stopTimer();
         });
@@ -117,20 +125,26 @@ public class TypingBlock extends VerticalLayout {
         }
     }
 
-    public void checkForCorrection(int ind) {
+    public String checkForCorrection(int ind) {
         String filed = textField.getValue();
         char chInput = filed.charAt(filed.length() - ind);
         char chComp = text.charAt(filed.length() - ind);
         if (chInput == chComp) {
             String sub = filed.substring(0, filed.length() - ind + 1);
             textField.setValue(sub);
+            return null;
         } else {
             if (filed.length() - ind == 0) {
                 String sub = filed.substring(0, filed.length() - ind);
                 textField.setValue(sub);
-                return;
+                return Character.toString(chInput);
             }
-            checkForCorrection(ind + 1);
+            String prevChars = checkForCorrection(ind + 1);
+            if (prevChars != null) {
+                return prevChars + chInput;
+            } else  {
+                return Character.toString(chInput);
+            }
         }
     }
 
@@ -161,7 +175,7 @@ public class TypingBlock extends VerticalLayout {
         TypingResult typingResult = new TypingResult(timeInMinutes, length, speed, mistakes);
         resultListeners.forEach(it -> it.accept(typingResult));
 
-        String str = "Скорость: %d зн/мин. Ваша точность:%.2f %%".formatted(speed, mistakes);
+        String str = "Скорость: %d зн/мин. Ваша точность: %.2f %%".formatted(speed, mistakes);
         Div div = new Div(new Text(str));
 
         Button closeButton = new Button(new Icon("lumo", "cross"));
