@@ -50,6 +50,14 @@
             <artifactId>togglebutton</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vaadin.componentfactory/popup -->
+        <dependency>
+            <groupId>com.vaadin.componentfactory</groupId>
+            <artifactId>popup</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.vaadin.addons.tatu</groupId>
             <artifactId>tabsheet</artifactId>

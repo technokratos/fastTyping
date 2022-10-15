@@ -4,6 +4,7 @@ package com.training.apparatus.view;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -15,9 +16,9 @@ import com.vaadin.flow.router.Route;
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final LoginForm login = new LoginForm();
-    private Button registration = new Button("Registration");
+    private final Button registration = new Button("Registration");
 
-    public LoginView(){
+    public LoginView() {
         addClassName("login-view");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
@@ -25,17 +26,27 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         login.setAction("login");
 
         registration.addClickListener(e ->
-                        registration.getUI().ifPresent(ui ->
-                                ui.navigate("registration"))
+                registration.getUI().ifPresent(ui ->
+                        ui.navigate("registration"))
         );
 
-        add(new H1("Training apparatus"), login, registration);
+//        add(new H1("Training apparatus"), login, registration);
+//
+        Button about = new Button("About");
+        Button theoretical = new Button("Theoretical description");
+
+        HorizontalLayout buttons = new HorizontalLayout(registration, about, theoretical);
+        add(new H1("Training apparatus"), login, buttons);
+        about.addClickListener(event -> registration.getUI().ifPresent(ui ->
+                ui.navigate("about")));
+        theoretical.addClickListener(event -> registration.getUI().ifPresent(ui ->
+                ui.navigate("theoretical")));
     }
 
     @Override
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         // inform the user about an authentication error
-        if(beforeEnterEvent.getLocation()
+        if (beforeEnterEvent.getLocation()
                 .getQueryParameters()
                 .getParameters()
                 .containsKey("error")) {

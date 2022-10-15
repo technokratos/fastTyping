@@ -32,6 +32,7 @@ public class SecurityConfig extends VaadinWebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.authorizeRequests().antMatchers("demo", "demo/**").permitAll();
+        http.authorizeRequests().antMatchers( "/resources/static/**").permitAll();
         super.configure(http);
 
         setLoginView(http, LoginView.class);

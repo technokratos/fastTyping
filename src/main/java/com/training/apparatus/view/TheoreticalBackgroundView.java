@@ -10,17 +10,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-
-import java.util.Optional;
-import javax.annotation.security.PermitAll;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@PermitAll
-@Route(value = "theoretical", layout =  MainLayout.class)
-@PageTitle("Theoretical Background")
+//@PermitAll
+//@Route(value = "theoreticalEditor", layout =  MainLayout.class)
+//@PageTitle("Theoretical Background")
 public class TheoreticalBackgroundView  extends VerticalLayout {
 
     TheoreticalTopicService theoreticalTopicService;
