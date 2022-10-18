@@ -5,6 +5,7 @@
     "@polymer/iron-icon": "3.0.1",
     "@polymer/iron-list": "3.1.0",
     "@polymer/polymer": "3.2.0",
+    "@vaadin-component-factory/vcf-popup": "2.0.0",
     "@vaadin-component-factory/vcf-toggle-button": "1.0.3",
     "@vaadin/accordion": "22.0.3",
     "@vaadin/app-layout": "22.0.3",
@@ -141,6 +142,7 @@
       "@polymer/iron-icon": "3.0.1",
       "@polymer/iron-list": "3.1.0",
       "@polymer/polymer": "3.2.0",
+      "@vaadin-component-factory/vcf-popup": "2.0.0",
       "@vaadin-component-factory/vcf-toggle-button": "1.0.3",
       "@vaadin/accordion": "22.0.3",
       "@vaadin/app-layout": "22.0.3",
@@ -267,6 +269,6 @@
       "workbox-precaching": "6.4.2",
       "workbox-webpack-plugin": "6.4.2"
     },
-    "hash": "084ccfb0b546cd86a6106202aecf707915b55dfb91923032975b9f15659aa4c7"
+    "hash": "bea4dbe140bcdbd655257eb2a3d5069c2dd2984e1bb7f074316b6a47a9c53a81"
   }
 }

@@ -32,7 +32,7 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
             "inner join users u " +
             "on r.user_id = u.id " +
             "where t.type = :type and t.language = :language and t.number = :number and u.email = :email ", nativeQuery = true)
-    Optional<Result> findResultByTaskAndUser(@Param("type") Type type, @Param("language") Language language,  @Param("number") Long number, @Param("email") String email);
+    Optional<Result> findResultByTaskAndUser(@Param("type") Type type, @Param("language") Language language, @Param("number") Long number, @Param("email") String email);
 
     List<Result> findByTaskAndUserOrderById(Task task, User auth);
     Long countByTaskAndUserOrderById(Task task, User auth);

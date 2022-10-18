@@ -1,6 +1,6 @@
-package com.training.apparatus.data.component;
+package com.training.apparatus.view.components;
 
-import com.training.apparatus.view.LoginView;
+import com.training.apparatus.view.anonymous.LoginView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.Text;

@@ -5,7 +5,11 @@ import com.training.apparatus.data.entity.Group;
 import com.training.apparatus.data.entity.User;
 import com.training.apparatus.data.repo.UserRepository;
 import com.training.apparatus.secutiy.SecurityService;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -79,4 +83,28 @@ public class UserService implements UserDetailsService {
         return userRepository.findByGroup(code);
     }
 
+    @Transactional
+    public void moveCursor(User auth, int length) {
+        Map<User.Settings, String> settings = getUserSettings(auth);
+        settings.put(User.Settings.CursorInExternalText, Integer.toString(length));
+        userRepository.save(auth);
+    }
+
+    @Transactional
+    public void setUserText(User auth, String url) {
+        Map<User.Settings, String> settings = getUserSettings(auth);
+
+        settings.put(User.Settings.ExternalTextLink, URLEncoder.encode(url, StandardCharsets.UTF_8));
+        settings.put(User.Settings.CursorInExternalText, Integer.toString(0));
+        userRepository.saveAndFlush(auth);
+    }
+
+    private static Map<User.Settings, String> getUserSettings(User auth) {
+        Map<User.Settings, String> settings = auth.getSettings();
+        if (settings == null) {
+            settings = new HashMap<>();
+            auth.setSettings(settings);
+        }
+        return settings;
+    }
 }

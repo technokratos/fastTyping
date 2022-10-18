@@ -1,13 +1,14 @@
-package com.training.apparatus.view;
+package com.training.apparatus.view.anonymous;
 
 import com.training.apparatus.view.components.TypingWithCommandsBlock;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import javax.annotation.security.PermitAll;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 
-@PermitAll
-@Route(value = "", layout = MainLayout.class)
+@AnonymousAllowed
+@Route(value = "demo")
 @PageTitle("Training apparatus")
 public class DemoView extends VerticalLayout {
 
@@ -15,6 +16,12 @@ public class DemoView extends VerticalLayout {
 
     public DemoView() {
         setSizeFull();
+        Button main = new Button("Main");
+        main.addClickListener(event ->
+                getUI().ifPresent(ui ->
+                        ui.navigate(""))
+        );
+        add(main);
         TypingWithCommandsBlock typingBlock = new TypingWithCommandsBlock();
         typingBlock.setText(text);
         add(typingBlock);

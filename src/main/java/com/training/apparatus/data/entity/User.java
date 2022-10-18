@@ -29,6 +29,10 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
+
+    @org.hibernate.annotations.Type(type = "json")
+    private Map<Settings, String> settings = new HashMap<>();
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -110,5 +114,9 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(id, pseudonym, email, password);
+    }
+
+    public enum Settings {
+        ExternalTextLink, CursorInExternalText
     }
 }

@@ -1,4 +1,4 @@
-package com.training.apparatus.view;
+package com.training.apparatus.view.anonymous;
 
 
 import com.vaadin.flow.component.button.Button;
@@ -32,15 +32,16 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
 //        add(new H1("Training apparatus"), login, registration);
 //
-        Button about = new Button("About");
-        Button theoretical = new Button("Theoretical description");
-
-        HorizontalLayout buttons = new HorizontalLayout(registration, about, theoretical);
-        add(new H1("Training apparatus"), login, buttons);
-        about.addClickListener(event -> registration.getUI().ifPresent(ui ->
+        Button about = new Button("About", event -> registration.getUI().ifPresent(ui ->
                 ui.navigate("about")));
-        theoretical.addClickListener(event -> registration.getUI().ifPresent(ui ->
+        Button theoretical = new Button("Theoretical description", event -> registration.getUI().ifPresent(ui ->
                 ui.navigate("theoretical")));
+
+        Button demo = new Button("Demo", event -> registration.getUI().ifPresent(ui ->
+                ui.navigate("demo")));
+        HorizontalLayout buttons = new HorizontalLayout(registration, about, theoretical, demo);
+        add(new H1("Training apparatus"), login, buttons);
+
     }
 
     @Override

@@ -61,9 +61,9 @@ public class GenerationView extends VerticalLayout {
 //        ComboBox<BaseText> baseTextComboBox = new ComboBox<>("Text style", BaseText.values());
         Button refreshButton = new Button("Refresh");
         refreshButton.addClickListener(e -> this.regenerateText());
-        HorizontalLayout parametersLayout = new HorizontalLayout(generatorTypeComboBox, ngramCombox, lengthTextField,  refreshButton);
+        HorizontalLayout parametersLayout = new HorizontalLayout(generatorTypeComboBox, ngramCombox, lengthTextField);
         typingBlock.addResultListener(typingResult -> this.regenerateText());
-        add(parametersLayout, typingBlock);
+        add(parametersLayout, refreshButton, typingBlock);
         HorizontalLayout layout = new HorizontalLayout(typingBlock);
         layout.setSizeFull();
         add(layout);

@@ -1,6 +1,6 @@
-package com.training.apparatus.view;
+package com.training.apparatus.view.anonymous;
 
-import com.training.apparatus.data.component.HtmlRenderComponent;
+import com.training.apparatus.view.components.HtmlRenderComponent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;

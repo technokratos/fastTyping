@@ -1,4 +1,4 @@
-package com.training.apparatus.view;
+package com.training.apparatus.view.anonymous;
 
 import com.training.apparatus.data.entity.Role;
 import com.training.apparatus.data.entity.User;

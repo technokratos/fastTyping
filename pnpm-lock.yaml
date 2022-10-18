@@ -2,6 +2,7 @@ dependencies:
   '@polymer/iron-icon': 3.0.1
   '@polymer/iron-list': 3.1.0
   '@polymer/polymer': 3.2.0
+  '@vaadin-component-factory/vcf-popup': 2.0.0
   '@vaadin-component-factory/vcf-toggle-button': 1.0.3
   '@vaadin/accordion': 22.0.3
   '@vaadin/app-layout': 22.0.3
@@ -1584,6 +1585,20 @@ packages:
     dev: true
     resolution:
       integrity: sha512-cb+0ioil/7oz5//7tZUSwbrSAN/NWHrQylz5cW8G0dWTcF/g+/dSdMlKVZspBYuMAN1+WnwHrkxiRrLcwd0Heg==
+  /@vaadin-component-factory/vcf-popup/2.0.0:
+    dependencies:
+      '@polymer/iron-icon': 3.0.1
+      '@polymer/iron-media-query': 3.0.1
+      '@polymer/polymer': 3.2.0
+      '@vaadin/component-base': 22.0.3
+      '@vaadin/vaadin-button': 22.0.3
+      '@vaadin/vaadin-icons': 22.0.3
+      '@vaadin/vaadin-lumo-styles': 22.0.3
+      '@vaadin/vaadin-overlay': 22.0.3
+      '@vaadin/vaadin-themable-mixin': 22.0.3
+    dev: false
+    resolution:
+      integrity: sha512-oll4BQoyO5RdW0G7PNgx+YUqBhJcDdpy8+sJ/cMMfY/2Occ00btQBdgAd5d2R24cIEU8OnZS3nwRIodnZulMxA==
   /@vaadin-component-factory/vcf-toggle-button/1.0.3:
     dependencies:
       '@polymer/polymer': 3.2.0
@@ -8963,6 +8978,7 @@ specifiers:
   '@polymer/iron-icon': 3.0.1
   '@polymer/iron-list': 3.1.0
   '@polymer/polymer': 3.2.0
+  '@vaadin-component-factory/vcf-popup': 2.0.0
   '@vaadin-component-factory/vcf-toggle-button': 1.0.3
   '@vaadin/accordion': 22.0.3
   '@vaadin/app-layout': 22.0.3

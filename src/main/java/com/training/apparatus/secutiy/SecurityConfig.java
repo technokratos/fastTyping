@@ -1,7 +1,7 @@
 package com.training.apparatus.secutiy;
 
 import com.training.apparatus.data.service.UserService;
-import com.training.apparatus.view.LoginView;
+import com.training.apparatus.view.anonymous.LoginView;
 import com.vaadin.flow.spring.security.VaadinWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

@@ -45,11 +45,12 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink listLink = new RouterLink("Training Apparatus", DemoView.class);
+
 //        RouterLink course = new RouterLink("Course", CourseView.class);
         RouterLink generation = new RouterLink("Generation", GenerationView.class);
 //        RouterLink theoretical = new RouterLink("Theoretical", TheoreticalBackgroundView.class);
         //RouterLink dashboard = new RouterLink("Dashboard", DashboardView.class);
+        RouterLink externalText = new RouterLink("External text", ExternalTextView.class);
         RouterLink profile = new RouterLink("Profile", ProfileView.class);
         RouterLink worker = null;
         Optional<User> user = Optional.ofNullable(securityService.getAuthUser());
@@ -58,15 +59,15 @@ public class MainLayout extends AppLayout {
                  worker = new RouterLink("Worker", WorkerListView.class);
             }
         }
-        listLink.setHighlightCondition(HighlightConditions.sameLocation());
+        generation.setHighlightCondition(HighlightConditions.sameLocation());
 
         if(worker == null) {
             addToDrawer(new VerticalLayout(
-                    listLink, /*course,*/ generation,  /*theoretical, dashboard,*/ profile
+                    /*listLink, course,*/ generation, externalText,  /*theoretical, dashboard,*/ profile
             ));
         } else {
             addToDrawer(new VerticalLayout(
-                    listLink, /*course,*/ generation,  /*theoretical, dashboard,*/ profile, worker
+                    /*listLink, course,*/ generation, externalText,/*theoretical, dashboard,*/ profile, worker
             ));
         }
 

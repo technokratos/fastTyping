@@ -1,5 +1,6 @@
 package com.training.apparatus.view.components;
 
+import com.training.apparatus.data.entity.Language;
 import com.training.apparatus.data.widget.Stopwatch;
 import com.training.apparatus.keyboards.Command;
 import com.training.apparatus.keyboards.CommandMode;
@@ -85,6 +86,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
 
         textArea = new TextArea();
+        textArea.getStyle().set("text-align","center");
         textArea.setReadOnly(true);
         textArea.setValue(text);
         textArea.setWidth("100%");
@@ -353,6 +355,10 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
     public String getText() {
         return text;
+    }
+
+    public void setCommandLanguage(Language value) {
+        setCurrentLocale(value.getLocale());
     }
 
 
