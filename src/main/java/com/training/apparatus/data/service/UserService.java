@@ -84,9 +84,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void moveCursor(User auth, int length) {
+    public void moveCursor(User auth, int cursor) {
         Map<User.Settings, String> settings = getUserSettings(auth);
-        settings.put(User.Settings.CursorInExternalText, Integer.toString(length));
+        settings.put(User.Settings.CursorInExternalText, Integer.toString(cursor));
         userRepository.save(auth);
     }
 
@@ -95,7 +95,7 @@ public class UserService implements UserDetailsService {
         Map<User.Settings, String> settings = getUserSettings(auth);
 
         settings.put(User.Settings.ExternalTextLink, URLEncoder.encode(url, StandardCharsets.UTF_8));
-        settings.put(User.Settings.CursorInExternalText, Integer.toString(0));
+        //settings.put(User.Settings.CursorInExternalText, Integer.toString(0));
         userRepository.saveAndFlush(auth);
     }
 

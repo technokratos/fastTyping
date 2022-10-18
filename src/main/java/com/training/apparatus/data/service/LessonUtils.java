@@ -1,8 +1,8 @@
 package com.training.apparatus.data.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.training.apparatus.data.dto.KeyLanguage;
 import com.training.apparatus.data.dto.LessonDto;
-import com.training.apparatus.data.entity.Language;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -16,12 +16,12 @@ import java.util.Map;
  */
 public class LessonUtils {
 
-    private static final Map<Language, LessonDto[]> languageMap = new HashMap<>();
+    private static final Map<KeyLanguage, LessonDto[]> languageMap = new HashMap<>();
     static {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            languageMap.put(Language.Russian, getLessonDtos(mapper, "ru_RU.json"));
-            languageMap.put(Language.English, getLessonDtos(mapper, "en_US.json"));
+            languageMap.put(KeyLanguage.RUS, getLessonDtos(mapper, "ru_RU.json"));
+            languageMap.put(KeyLanguage.ENG, getLessonDtos(mapper, "en_US.json"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -35,7 +35,7 @@ public class LessonUtils {
         return mapper.readValue(inputStream, LessonDto[].class);
     }
 
-    public static List<LessonDto> getByLanguage(Language language) {
+    public static List<LessonDto> getByLanguage(KeyLanguage language) {
         return Arrays.stream(languageMap.get(language)).toList();
     }
 

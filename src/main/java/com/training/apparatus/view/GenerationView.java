@@ -2,13 +2,14 @@ package com.training.apparatus.view;
 
 import com.training.apparatus.data.entity.User;
 import com.training.apparatus.data.service.GeneratorType;
+import com.training.apparatus.data.service.ResultService;
 import com.training.apparatus.data.service.TextGeneratorFactory;
 import com.training.apparatus.data.service.UserService;
 import com.training.apparatus.data.text.TextGenerator;
 import com.training.apparatus.data.text.data.BaseText;
 import com.training.apparatus.data.text.data.GenerationParameter;
 import com.training.apparatus.secutiy.SecurityService;
-import com.training.apparatus.view.components. TypingWithCommandsBlock;
+import com.training.apparatus.view.components.TypingWithCommandsBlock;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -28,6 +29,7 @@ public class GenerationView extends VerticalLayout {
     private final SecurityService securityService;
     private final UserService userService;
     private final User auth;
+    private final ResultService resultService;
 
     private final TextGeneratorFactory generatorFactory;
     private final  TypingWithCommandsBlock typingBlock;
@@ -38,10 +40,11 @@ public class GenerationView extends VerticalLayout {
     private final static Integer MAX_LIMIT = 10000;
     private final static Integer MIN_LIMIT = 5;
 
-    public GenerationView(SecurityService securityService, UserService userService, TextGeneratorFactory generatorFactory) {
+    public GenerationView(SecurityService securityService, UserService userService, ResultService resultService, TextGeneratorFactory generatorFactory) {
         auth = securityService.getAuthUser();
         this.securityService = securityService;
         this.userService = userService;
+        this.resultService = resultService;
         this.generatorFactory = generatorFactory;
         addClassName("generation-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
@@ -63,6 +66,7 @@ public class GenerationView extends VerticalLayout {
         refreshButton.addClickListener(e -> this.regenerateText());
         HorizontalLayout parametersLayout = new HorizontalLayout(generatorTypeComboBox, ngramCombox, lengthTextField);
         typingBlock.addResultListener(typingResult -> this.regenerateText());
+        typingBlock.addResultListener(typingResult -> resultService.save(typingResult, auth));
         add(parametersLayout, refreshButton, typingBlock);
         HorizontalLayout layout = new HorizontalLayout(typingBlock);
         layout.setSizeFull();

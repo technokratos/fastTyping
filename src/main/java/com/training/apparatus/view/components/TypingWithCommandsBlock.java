@@ -1,6 +1,7 @@
 package com.training.apparatus.view.components;
 
-import com.training.apparatus.data.entity.Language;
+import com.training.apparatus.data.dto.KeyboardLayout;
+import com.training.apparatus.data.entity.StandardLayouts;
 import com.training.apparatus.data.widget.Stopwatch;
 import com.training.apparatus.keyboards.Command;
 import com.training.apparatus.keyboards.CommandMode;
@@ -63,21 +64,25 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
     private CommandMode commandMode = CommandMode.Full;
 
-    private Locale currentLocale;
+    private KeyboardLayout currentLayout;
+
+    private final Locale currentLocale = TranslationProvider.LOCALE_RU;
 
     private Character currentChar;
 
-    private static final Map<Triple<Command, CommandMode, Locale>, CommandGroup> commandGroupMap = new HashMap<>();
+    private final Map<Triple<Command, CommandMode, KeyboardLayout>, CommandGroup> commandGroupMap = new HashMap<>();
     private final List<Consumer<TypingResult>> resultListeners = new ArrayList<>();
 
     private boolean showCommands = true;
+    private final FingerCommandService fingerCommandService;
 
     public TypingWithCommandsBlock() {
+        fingerCommandService = new FingerCommandService();
         imageContainer = new Div();
         initContextMenu();
 
-        currentLocale = TranslationProvider.LOCALE_RU;
-        commandMapper = new FingerCommandService().getCommandMapper(currentLocale);
+        currentLayout = StandardLayouts.Russian.getLayout();
+        commandMapper = fingerCommandService.getCommandMapper(currentLayout);
         setSizeFull();
         commandPanel = new HorizontalLayout();
 //        initContextMenuForCommandMode(commandPanel);
@@ -150,11 +155,19 @@ public class TypingWithCommandsBlock extends VerticalLayout {
     }
 
     public void setText(String text) {
-        this.text = text;
-        textArea.setValue(text);
-        textField.setValue("");
-        currentChar = text.charAt(0);
-        updateCommandPanel();
+        if (text != null && text.length() > 0) {
+            this.text = text;
+            textArea.setValue(text);
+            textField.setValue("");
+            currentChar = text.charAt(0);
+            updateCommandPanel();
+        } else {
+            currentChar = null;
+            this.text = "";
+            textArea.setValue("");
+            textField.setValue("");
+            updateCommandPanel();
+        }
     }
 
     private void updateCommandPanel() {
@@ -164,7 +177,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
                 Command command = commandMapper.get(currentChar);
                 if (command != null) {
 
-                    CommandGroup commandGroup = commandGroupMap.computeIfAbsent(Triple.of(command, commandMode, currentLocale), key -> getCommandGroup(key.getLeft(), key.getMiddle(), key.getRight()));
+                    CommandGroup commandGroup = commandGroupMap.computeIfAbsent(Triple.of(command, commandMode, currentLayout), key -> getCommandGroup(key.getLeft(), key.getMiddle(), key.getRight()));
                     String s = (currentChar == ' ') ? "<Space>" : currentChar.toString();
 
                     Label currentCharLabel = new Label(s + " - ");
@@ -188,14 +201,15 @@ public class TypingWithCommandsBlock extends VerticalLayout {
         }
     }
 
-    private CommandGroup getCommandGroup(Command command, CommandMode mode, Locale locale) {
+    private CommandGroup getCommandGroup(Command command, CommandMode mode, KeyboardLayout keyboardLayout) {
         I18NProvider provider = new TranslationProvider();// VaadinService.getCurrent().getInstantiator().getI18NProvider();
         Hand hand = command.getHand();
         Finger finger = command.getFinger();
         Position[] position = command.getPosition();
         boolean shift = command.isShift();
 
-        Function<String, CommandElement> elementInitiator = (mode == CommandMode.Icon) ? key -> iconElement(key, provider, locale) : key -> textElement(key, provider, locale, mode);
+        Function<String, CommandElement> elementInitiator = (mode == CommandMode.Icon) ?
+                key -> iconElement(key, provider, currentLocale) : key -> textElement(key, provider, currentLocale, mode);
 
         List<CommandElement> elements = new ArrayList<>();
         if (shift) {
@@ -232,9 +246,10 @@ public class TypingWithCommandsBlock extends VerticalLayout {
         updateCommandPanel();
     }
 
-    public void setCurrentLocale(Locale currentLocale) {
-        this.currentLocale = currentLocale;
-        commandMapper = new FingerCommandService().getCommandMapper(currentLocale);
+    public void setCurrentLayout(KeyboardLayout currentLayout) {
+        this.currentLayout = currentLayout;
+
+        commandMapper = fingerCommandService.getCommandMapper(currentLayout);
         updateCommandPanel();
     }
 
@@ -339,7 +354,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
         HorizontalLayout layout = new HorizontalLayout(div, closeButton);
         layout.setAlignItems(Alignment.CENTER);
-        notification.setPosition(Notification.Position.MIDDLE);
+        notification.setPosition(Notification.Position.TOP_CENTER);
 
         notification.add(layout);
         notification.open();
@@ -357,8 +372,8 @@ public class TypingWithCommandsBlock extends VerticalLayout {
         return text;
     }
 
-    public void setCommandLanguage(Language value) {
-        setCurrentLocale(value.getLocale());
+    public void setCommandLanguage(KeyboardLayout value) {
+        setCurrentLayout(value);
     }
 
 

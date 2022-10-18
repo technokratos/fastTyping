@@ -28,7 +28,7 @@ public class HtmlText {
     }
 
     public String loadText(String url, int maxLength, Integer partLength) throws ExceedTextSizeException {
-        try {
+        try {//todo if url empty throw exep
             Document doc = Jsoup.connect(url).get();
             StringBuffer buffer = new StringBuffer();
             Element body = doc.body();
@@ -44,9 +44,10 @@ public class HtmlText {
 
     public String getPrevPart(Integer partLength) throws ExceedTextSizeException {
         if (cursor - partLength <= 0) {
-            throw new ExceedTextSizeException("Position is out text");
+            cursor = 0;
+        } else {
+            cursor -= partLength;
         }
-        cursor -= partLength;
         int end = (cursor + partLength > text.length()) ? (text.length() - 1) : cursor + partLength;
         return text.substring(cursor, end);
     }
@@ -57,7 +58,7 @@ public class HtmlText {
         }
         int childrenSize = element.childNodeSize();
         if (childrenSize == 0) {
-            buffer.append(element.text());
+            append(element, buffer);
             return;
         }
         Element childElement;
@@ -66,23 +67,37 @@ public class HtmlText {
             if (node instanceof Element) {
                 childElement = (Element) node;
                 switch (childElement.tagName().toLowerCase()) {
-                    case "h1", "h2", "h3", "h4", "h5", "p", "i", "sup", "br", "b" -> buffer.append(element.text());
+                    case "h1", "h2", "h3", "h4", "h5", "p", "i", "sup", "br", "b" -> append(element, buffer);
                     case "div", "span" -> parse(childElement, buffer, maxLength);
                     case "img" -> {
                         //skip
                     }
                     default -> {
-                        buffer.append(element.text());
+                        append(element, buffer);
                         log.warn("Don't support tag {}", childElement.tagName());
                     }
                 }
             } else {
-                buffer.append(element.text());
+                append(element, buffer);
             }
             if (buffer.length() > maxLength) {
                 return;
             }
         }
 
+    }
+
+    private static StringBuffer append(Element element, StringBuffer buffer) {
+        return buffer.append(element.text());
+    }
+
+
+    public String getNextPart(Integer cursor, Integer length) throws ExceedTextSizeException {
+        this.cursor = cursor - length;
+        return getNextPart(length);
+    }
+
+    public int getCursor() {
+        return cursor;
     }
 }

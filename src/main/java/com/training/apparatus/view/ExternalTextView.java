@@ -1,8 +1,9 @@
 package com.training.apparatus.view;
 
-import com.training.apparatus.data.entity.Language;
+import com.training.apparatus.data.entity.StandardLayouts;
 import com.training.apparatus.data.entity.User;
 import com.training.apparatus.data.exceptions.ExceedTextSizeException;
+import com.training.apparatus.data.service.ResultService;
 import com.training.apparatus.data.service.UserService;
 import com.training.apparatus.secutiy.SecurityService;
 import com.training.apparatus.view.components.HtmlText;
@@ -30,33 +31,36 @@ public class ExternalTextView extends VerticalLayout {
 
     public static final int MIN_LENGTH_PART = 1;
     public static final int MAX_LENGTH_PART = 1000;
-    public static final int MAX_TEXT_LENGTH = 100000;
+    public static final int MAX_TEXT_LENGTH = 1000000;
 
     private final SecurityService securityService;
     private final UserService userService;
     private final User auth;
+    private final ResultService resultService;
     private final TextField linkTextField = new TextField("Link to external html text", "http://lit.lib.ru/...");
     private final IntegerField partLengthField;
 
     private final HtmlText htmlText;
     private final TypingWithCommandsBlock typingBlock = new TypingWithCommandsBlock();
 
-    public ExternalTextView(SecurityService securityService, UserService userService) {
+    public ExternalTextView(SecurityService securityService, UserService userService, ResultService resultService) {
         this.securityService = securityService;
         this.userService = userService;
+        this.resultService = resultService;
         auth = this.securityService.getAuthUser();
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
         setSizeFull();
-        //todo change language to keyboard layout
-        ComboBox<Language> languageComboBox = new ComboBox<>("Language", Language.values());
-        languageComboBox.setValue(Language.Russian);
+
+        ComboBox<StandardLayouts> layoutComboBox = new ComboBox<>("Keyboard layout", StandardLayouts.values());
+        layoutComboBox.setValue(StandardLayouts.Russian);
         htmlText = new HtmlText();
         partLengthField = new IntegerField("Portion of text", 100, event -> nextPart(event.getValue()));
         partLengthField.setMin(MIN_LENGTH_PART);
         partLengthField.setMax(MAX_LENGTH_PART);
+        partLengthField.setValue(100);
 
-        add(new HorizontalLayout(linkTextField, partLengthField));
+        add(new HorizontalLayout(linkTextField, layoutComboBox, partLengthField));
         add(new HorizontalLayout(new Button("Prev", event1 -> prevPart(partLengthField.getValue())), new Button("Next", event2 -> nextPart(partLengthField.getValue()))));
 
 
@@ -69,18 +73,17 @@ public class ExternalTextView extends VerticalLayout {
                 linkTextField.setValue(event.getOldValue());
             }
         });
-        languageComboBox.addValueChangeListener(event -> {
-            typingBlock.setCommandLanguage(event.getValue());
-        });
+        layoutComboBox.addValueChangeListener(event -> typingBlock.setCommandLanguage(event.getValue().getLayout()));
         typingBlock.addResultListener(typingResult -> {
             try {
                 String text = htmlText.getNextPart(partLengthField.getValue());
                 typingBlock.setText(text);
-                this.userService.moveCursor(auth, typingBlock.getText().length());
+                this.userService.moveCursor(auth, htmlText.getCursor());
             } catch (ExceedTextSizeException e) {
-                Notification.show(e.getMessage(), 5, Notification.Position.MIDDLE);
+                Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
             }
         });
+        typingBlock.addResultListener(typingResult -> this.resultService.save(typingResult, auth));
         add(typingBlock);
 
         Map<User.Settings, String> settingsMap = auth.getSettings();
@@ -88,18 +91,16 @@ public class ExternalTextView extends VerticalLayout {
             String link = settingsMap.get(User.Settings.ExternalTextLink);
             if (link != null) {
                 String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
+                linkTextField.setValue(decodedLink);
                 String cursor = settingsMap.get(User.Settings.CursorInExternalText);
                 if (cursor != null) {
                     try {
-                        partLengthField.setValue(Integer.parseInt(cursor));
+                        setCursor(Integer.parseInt(cursor), partLengthField.getValue());
                     } catch (Exception e) {
                         log.error("Impossible parse cursor value from string " + cursor, e);
                     }
                 }
-                linkTextField.setValue(decodedLink);
-                setLink(userService, decodedLink);
             }
-
         }
     }
 
@@ -108,27 +109,39 @@ public class ExternalTextView extends VerticalLayout {
             String text = htmlText.loadText(link, MAX_TEXT_LENGTH, partLengthField.getValue());
             typingBlock.setText(text);
             userService.setUserText(auth, link);
-            Notification.show("Text is loaded: '%s...'".formatted(text.substring(0, 10)));
+            final String showText = (text.length() > 10)?text.substring(0, 10): text;
+            Notification.show("Text is loaded: '%s...'".formatted(showText), 3000, Notification.Position.MIDDLE);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3, Notification.Position.MIDDLE);
+            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
         }
     }
 
     private void prevPart(Integer length) {
         try {
             String text = htmlText.getPrevPart(length);
+            this.userService.moveCursor(auth, htmlText.getCursor());
             typingBlock.setText(text);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3, Notification.Position.MIDDLE);
+            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
         }
     }
 
     private void nextPart(Integer length) {
         try {
             String text = htmlText.getNextPart(length);
+            this.userService.moveCursor(auth, htmlText.getCursor());
             typingBlock.setText(text);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3, Notification.Position.MIDDLE);
+            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+        }
+    }
+
+    private void setCursor(Integer cursor, Integer length) {
+        try {
+            String text = htmlText.getNextPart(cursor, length);
+            typingBlock.setText(text);
+        } catch (ExceedTextSizeException e) {
+            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
         }
     }
 

@@ -1,16 +1,27 @@
 package com.training.apparatus.keyboards;
 
-import com.training.apparatus.translation.TranslationProvider;
+import com.training.apparatus.data.dto.KeyboardLayout;
+import com.training.apparatus.data.entity.StandardLayouts;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 
-import static com.training.apparatus.keyboards.Hand.*;
-import static com.training.apparatus.keyboards.Finger.*;
-import static com.training.apparatus.keyboards.Position.*;
+import static com.training.apparatus.keyboards.Finger.First;
+import static com.training.apparatus.keyboards.Finger.Fourth;
+import static com.training.apparatus.keyboards.Finger.Second;
+import static com.training.apparatus.keyboards.Finger.Third;
+import static com.training.apparatus.keyboards.Finger.Zero;
+import static com.training.apparatus.keyboards.Hand.LeftHand;
+import static com.training.apparatus.keyboards.Hand.RightHand;
+import static com.training.apparatus.keyboards.Position.Down;
+import static com.training.apparatus.keyboards.Position.InPlace;
+import static com.training.apparatus.keyboards.Position.Left;
+import static com.training.apparatus.keyboards.Position.Right;
+import static com.training.apparatus.keyboards.Position.RightTwice;
+import static com.training.apparatus.keyboards.Position.Up;
+import static com.training.apparatus.keyboards.Position.UpTwice;
 
 
 /**
@@ -20,7 +31,7 @@ import static com.training.apparatus.keyboards.Position.*;
 @Service
 public class FingerCommandService {
 
-    private final Map<Locale, Map<Character, Command>> localeMap = new HashMap<>();
+    private final Map<KeyboardLayout, Map<Character, Command>> localeMap = new HashMap<>();
 
 
 
@@ -74,7 +85,7 @@ public class FingerCommandService {
 
         map.put(List.of(ABSENT, ABSENT, ' ', ABSENT), new GenCommand(RightHand, Zero, false));
 
-        localeMap.put(TranslationProvider.LOCALE_RU, fillCharacterCommandMap(map));
+        localeMap.put(StandardLayouts.Russian.getLayout(), fillCharacterCommandMap(map));
     }
 
     {
@@ -123,7 +134,7 @@ public class FingerCommandService {
 
         map.put(List.of(ABSENT, ABSENT, ' ', ABSENT), new GenCommand(RightHand, Zero, false));
 
-        localeMap.put(TranslationProvider.LOCALE_EN, fillCharacterCommandMap(map));
+        localeMap.put(StandardLayouts.English.getLayout(), fillCharacterCommandMap(map));
 
     }
 
@@ -146,8 +157,8 @@ public class FingerCommandService {
         return commandHashMap;
     }
 
-    public Map<Character, Command> getCommandMapper(Locale locale) {
-        return localeMap.getOrDefault(locale, Collections.emptyMap());
+    public Map<Character, Command> getCommandMapper(KeyboardLayout layout) {
+        return localeMap.getOrDefault(layout, Collections.emptyMap());
     }
 
     record GenCommand(Hand hand, Finger finger, boolean shift, Position additionalPosition){
