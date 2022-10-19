@@ -45,7 +45,7 @@ public class FingerCommandService {
         map.put(List.of('%', 'Е' ,'П', 'И'), new GenCommand(LeftHand, First,true, RightTwice));
 
         map.put(List.of('4', 'к' ,'а', 'м'), new GenCommand(LeftHand, First, false));
-        map.put(List.of('$', 'К' ,'А', 'М'), new GenCommand(LeftHand, First, true));
+        map.put(List.of(';', 'К' ,'А', 'М'), new GenCommand(LeftHand, First, true));
 
         map.put(List.of('3', 'у' ,'в', 'с'), new GenCommand(LeftHand, Second,false));
         map.put(List.of('№', 'У' ,'В', 'С'), new GenCommand(LeftHand, Second,true));
@@ -68,8 +68,8 @@ public class FingerCommandService {
         map.put(List.of('7', 'г' ,'о', 'ь'), new GenCommand(RightHand, First,false));
         map.put(List.of('?', 'Г' ,'О', 'Ь'), new GenCommand(RightHand, First,true));
 
-        map.put(List.of('8', 'ш' ,'л', 'с'), new GenCommand(RightHand, Second, false));
-        map.put(List.of('*', 'Ш' ,'Л', 'С'), new GenCommand(RightHand, Second, true));
+        map.put(List.of('8', 'ш' ,'л', 'б'), new GenCommand(RightHand, Second, false));
+        map.put(List.of('*', 'Ш' ,'Л', 'Б'), new GenCommand(RightHand, Second, true));
 
         map.put(List.of('9', 'щ' ,'д', 'ю'), new GenCommand(RightHand, Third, false));
         map.put(List.of('(', 'Щ' ,'Д', 'Ю'), new GenCommand(RightHand, Third,true));

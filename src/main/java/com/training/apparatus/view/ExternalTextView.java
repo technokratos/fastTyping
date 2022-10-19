@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @PermitAll
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "external", layout = MainLayout.class)
 @PageTitle("External text")
 public class ExternalTextView extends VerticalLayout {
 
@@ -37,7 +37,7 @@ public class ExternalTextView extends VerticalLayout {
     private final UserService userService;
     private final User auth;
     private final ResultService resultService;
-    private final TextField linkTextField = new TextField("Link to external html text", "http://lit.lib.ru/...");
+    private final TextField linkTextField = new TextField(getTranslation("external.linkToExternalText"), "http://lib.ru/...");
     private final IntegerField partLengthField;
 
     private final HtmlText htmlText;
@@ -52,16 +52,17 @@ public class ExternalTextView extends VerticalLayout {
 
         setSizeFull();
 
-        ComboBox<StandardLayouts> layoutComboBox = new ComboBox<>("Keyboard layout", StandardLayouts.values());
+        ComboBox<StandardLayouts> layoutComboBox = new ComboBox<>(getTranslation("external.keyboardLayout"), StandardLayouts.values());
         layoutComboBox.setValue(StandardLayouts.Russian);
         htmlText = new HtmlText();
-        partLengthField = new IntegerField("Portion of text", 100, event -> nextPart(event.getValue()));
+        partLengthField = new IntegerField(getTranslation("external.portionOfText"), 100, event -> nextPart(event.getValue()));
         partLengthField.setMin(MIN_LENGTH_PART);
         partLengthField.setMax(MAX_LENGTH_PART);
         partLengthField.setValue(100);
 
         add(new HorizontalLayout(linkTextField, layoutComboBox, partLengthField));
-        add(new HorizontalLayout(new Button("Prev", event1 -> prevPart(partLengthField.getValue())), new Button("Next", event2 -> nextPart(partLengthField.getValue()))));
+        add(new HorizontalLayout(new Button(getTranslation("external.prev"), event1 -> prevPart(partLengthField.getValue())),
+                new Button(getTranslation("external.next"), event2 -> nextPart(partLengthField.getValue()))));
 
 
 
@@ -80,7 +81,7 @@ public class ExternalTextView extends VerticalLayout {
                 typingBlock.setText(text);
                 this.userService.moveCursor(auth, htmlText.getCursor());
             } catch (ExceedTextSizeException e) {
-                Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+                Notification.show(getTranslation(e.getCode()), 3000, Notification.Position.MIDDLE);
             }
         });
         typingBlock.addResultListener(typingResult -> this.resultService.save(typingResult, auth));
@@ -110,9 +111,9 @@ public class ExternalTextView extends VerticalLayout {
             typingBlock.setText(text);
             userService.setUserText(auth, link);
             final String showText = (text.length() > 10)?text.substring(0, 10): text;
-            Notification.show("Text is loaded: '%s...'".formatted(showText), 3000, Notification.Position.MIDDLE);
+            Notification.show(getTranslation("external.textIsLoaded", showText), 3000, Notification.Position.MIDDLE);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+            Notification.show(getTranslation(e.getCode()), 3000, Notification.Position.MIDDLE);
         }
     }
 
@@ -122,7 +123,7 @@ public class ExternalTextView extends VerticalLayout {
             this.userService.moveCursor(auth, htmlText.getCursor());
             typingBlock.setText(text);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+            Notification.show(getTranslation(e.getCode()), 3000, Notification.Position.MIDDLE);
         }
     }
 
@@ -132,7 +133,7 @@ public class ExternalTextView extends VerticalLayout {
             this.userService.moveCursor(auth, htmlText.getCursor());
             typingBlock.setText(text);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+            Notification.show(getTranslation(e.getCode()), 3000, Notification.Position.MIDDLE);
         }
     }
 
@@ -141,7 +142,7 @@ public class ExternalTextView extends VerticalLayout {
             String text = htmlText.getNextPart(cursor, length);
             typingBlock.setText(text);
         } catch (ExceedTextSizeException e) {
-            Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
+            Notification.show(getTranslation(e.getCode()), 3000, Notification.Position.MIDDLE);
         }
     }
 

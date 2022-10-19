@@ -95,7 +95,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
         textArea.setReadOnly(true);
         textArea.setValue(text);
         textArea.setWidth("100%");
-        textField = new TextField("Input text", "Start typing");
+        textField = new TextField(getTranslation("typing.inputText"), getTranslation("typing.startTyping"));
         textField.setWidth("60%");
         textField.setValueChangeMode(ValueChangeMode.EAGER);
         resultLabel = new Label();
@@ -127,13 +127,14 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
     private void initContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        Checkbox checkbox = new Checkbox("Show commands", showCommands);
+        Checkbox checkbox = new Checkbox(getTranslation("typing.showCommand"), showCommands);
         checkbox.addValueChangeListener(e-> {
             showCommands = e.getValue();
             updateCommandPanel();
         });
         contextMenu.add(checkbox);
-        ComboBox<CommandMode> formatCommandCombobox = new ComboBox<>("Format command", CommandMode.values());
+        ComboBox<CommandMode> formatCommandCombobox = new ComboBox<>(getTranslation("typing.formatCommand"), CommandMode.values());
+        formatCommandCombobox.setItemLabelGenerator(item -> getTranslation(item.getKey()));
         contextMenu.addItem(formatCommandCombobox);
         formatCommandCombobox.setValue(commandMode);
         formatCommandCombobox.addValueChangeListener(event -> {
@@ -184,18 +185,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
                     currentCharLabel.getStyle().set("font-weight", "bold");
                     commandPanel.add(currentCharLabel);
                     commandGroup.create().forEach(commandPanel::add);
-//                    if (command.getHand() == Hand.LeftHand) {
-//                        commandPanel.getChildren()
-//                                .filter(child -> child instanceof Icon)
-//                                .map(child -> (Icon) child)
-////                            .map(icon -> icon.)
-                    /*
-                    transform:scale(-1,1);
-            -webkit-transform:scale(-1,1);
-            -moz-transform:scale(-1,1);
-            -o-transform:scale(-1,1)'
-                     */
-//                    }
+
                 }
             }
         }
@@ -222,7 +212,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
     }
 
     private static CommandElement iconElement(String key, I18NProvider provider, Locale locale) {
-        String value = provider.getTranslation(key + ".icon", locale);
+        String value = provider.getTranslation("commands." + key + ".icon", locale);
         try {
             VaadinIcon icon = VaadinIcon.valueOf(value);
             CommandElement element = CommandElement.of(icon);
@@ -237,7 +227,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
     private static CommandElement textElement(String key, I18NProvider provider, Locale locale, CommandMode mode) {
         final String postfix = mode.name().toLowerCase();
-        return CommandElement.of(provider.getTranslation(key +"." + postfix, locale));
+        return CommandElement.of(provider.getTranslation("commands." + key + "." + postfix, locale));
     }
 
 
@@ -255,16 +245,16 @@ public class TypingWithCommandsBlock extends VerticalLayout {
 
     private ComboBox<KeyboardImageMap> keyboardContextMenuItem() {
         List<KeyboardImageMap> maps = List.of(
-                new KeyboardImageMap("Плоская карта(рус.)", "keyboard_maps/map_rus.png"),
-                new KeyboardImageMap("Пирамида(рус.)", "keyboard_maps/piramid_rus.png"),
-                new KeyboardImageMap("Пирамида(англ.)", "keyboard_maps/piramid_eng.png"),
-                new KeyboardImageMap("Симметричная пирамида(рус.)", "keyboard_maps/piramid_sym_rus.png"),
-                new KeyboardImageMap("Симметричная пирамида(англ.)", "keyboard_maps/piramid_sym_eng.png"));
+                new KeyboardImageMap(getTranslation("typing.map.russianFlat"), "keyboard_maps/map_rus.png"),
+                new KeyboardImageMap(getTranslation("typing.map.russianPyramid"), "keyboard_maps/piramid_rus.png"),
+                new KeyboardImageMap(getTranslation("typing.map.englishPyramid"), "keyboard_maps/piramid_eng.png"),
+                new KeyboardImageMap(getTranslation("typing.map.russianSymmetric"), "keyboard_maps/piramid_sym_rus.png"),
+                new KeyboardImageMap(getTranslation("typing.map.englishSymmetric"), "keyboard_maps/piramid_sym_eng.png"));
 
 
 
 
-        ComboBox<KeyboardImageMap> mapComboBox = new ComboBox<>("Карта клавиатуры", maps);
+        ComboBox<KeyboardImageMap> mapComboBox = new ComboBox<>(getTranslation("typing.keyboardMap"), maps);
 
         imageContainer.add(maps.iterator().next().image);
         mapComboBox.setValue(maps.iterator().next());
@@ -283,8 +273,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
             double charInMinutes = length / currentTimeSec / 60.0;
             int baseTextLength = textArea.getValue().length();
             int errors = count - length;
-//            double errorRate = 100.0 * errors / baseTextLength; //, %.2f %%
-            resultLabel.setText("%.2f зн/мин, %d из %d, ошибок %d".formatted(charInMinutes, length, baseTextLength, errors));
+            resultLabel.setText(getTranslation("typing.result", charInMinutes, length, baseTextLength, errors));
         }
     }
 
@@ -344,8 +333,8 @@ public class TypingWithCommandsBlock extends VerticalLayout {
         TypingResult typingResult = new TypingResult(timeInMinutes, length, speed, mistakes);
         resultListeners.forEach(it -> it.accept(typingResult));
 
-        String str = "Скорость: %d зн/мин. Ваша точность: %.2f %%".formatted(speed, mistakes);
-        Div div = new Div(new Text(str));
+
+        Div div = new Div(new Text(getTranslation("typing.currentStatistics", speed, mistakes)));
 
         Button closeButton = new Button(new Icon("lumo", "cross"));
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
@@ -386,7 +375,7 @@ public class TypingWithCommandsBlock extends VerticalLayout {
             this.name = name;
             //StreamResource res = new StreamResource("keyboard-map.png", () -> Simulator.class.getClassLoader().getResourceAsStream("keyboard_maps/map_rus.png"));
             StreamResource res = new StreamResource(fileName.substring(fileName.indexOf("/") + 1), () -> TypingWithCommandsBlock.class.getClassLoader().getResourceAsStream(fileName));
-            image = new Image(res, "Карта клавиатуры");
+            image = new Image(res, "Keyboard map");
             image.setWidth(1024, Unit.PIXELS);
 
         }

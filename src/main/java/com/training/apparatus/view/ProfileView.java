@@ -42,6 +42,9 @@ public class ProfileView extends VerticalLayout {
     User user;
 
     Button reset;
+    private Span speedSpan;
+    private Span mistakesSpan;
+    private Span attemptsSpan;
 
     public ProfileView(SecurityService securityService, UserRepository userRepository, ResultRepository resultRepository,
                        GroupService groupService, GroupRepository groupRepository, UserService userService) {
@@ -65,19 +68,22 @@ public class ProfileView extends VerticalLayout {
 
     public VerticalLayout getToolBox() {
         VerticalLayout vert = new VerticalLayout();
-        Span hello = new Span("Hello, " +  user.getPseudonym());
-        Span speed = new Span("Your average typing speed " + resultRepository.avgSpeed(user.getId()).orElse(0.0));
-        Span mistakes = new Span("Your average typing mistakes " + resultRepository.avgMistakes(user.getId()).orElse(0.0));
-        Span number = new Span("Your number of attempts " + resultRepository.countResult(user.getId()));
-        vert.add(hello, speed, mistakes, number);
+        Span hello = new Span(getTranslation("profile.pseudonym", user.getPseudonym()));
+        speedSpan = new Span(getTranslation("profile.averageSpeed", resultRepository.avgSpeed(user.getId()).orElse(0.0)));
+        mistakesSpan = new Span(getTranslation("profile.averageMistakes",  + resultRepository.avgMistakes(user.getId()).orElse(0.0)));
+        attemptsSpan = new Span(getTranslation("profile.attempts",  + resultRepository.countResult(user.getId())));
+        vert.add(hello, speedSpan, mistakesSpan, attemptsSpan);
         vert.setAlignItems(Alignment.CENTER);
         return vert;
     }
 
     public Button getReset() {
-        reset = new Button("Reset results");
+        reset = new Button(getTranslation("profile.resetResults"));
         reset.addClickListener(e -> {
             userService.resetResult(user.getEmail());
+            speedSpan.setText(getTranslation("profile.averageSpeed", 0.0));
+            mistakesSpan.setText(getTranslation("profile.averageMistakes",  0.0));
+            attemptsSpan.setText(getTranslation("profile.attempts",  0));
         });
         return reset;
     }
@@ -87,7 +93,7 @@ public class ProfileView extends VerticalLayout {
             HorizontalLayout horiz = new HorizontalLayout();
             TextField text = new TextField();
             text.setPlaceholder(user.getGroup().getLink());
-            Button button = new Button("Generated");
+            Button button = new Button(getTranslation("profile.generate"));
             button.addClickListener(
                     e -> text.setValue(groupService.generateCode(user.getEmail()))
             );
@@ -96,44 +102,40 @@ public class ProfileView extends VerticalLayout {
             return horiz;
         }
         if(user.getRole().name().equals("ROLE_WORKER")) {
-            if(user.getGroup() == null) {
-                VerticalLayout vert = new VerticalLayout();
-                Button reg = new Button("Registration Group");
-                reg.addClickListener(e ->
-                        reg.getUI().ifPresent(ui ->
-                                ui.navigate("registrationgroup"))
-                );
-                HorizontalLayout horiz = new HorizontalLayout();
-                TextField text = new TextField();
-                text.setPlaceholder("Enter group code");
-                Button button = new Button("Enter");
-                button.addClickListener(
-                    e -> {
-                        groupService.addUser(user.getEmail(), text.getValue());
-                        button.getUI().ifPresent(ui ->
-                                ui.navigate("profile"));
-                    }
-                );
-                horiz.add(text, button);
-                vert.add(reg, horiz);
-                horiz.setAlignItems(Alignment.CENTER);
-                vert.setAlignItems(Alignment.CENTER);
-                return vert;
-            } else {
-                VerticalLayout vert = new VerticalLayout();
-                Button reg = new Button("Registration Group");
-                reg.addClickListener(e ->
-                        reg.getUI().ifPresent(ui ->
-                                ui.navigate("registrationgroup"))
-                );
-                Button button = new Button("Leave the group");
-                button.addClickListener(
-                        e -> groupService.removeUser(user)
-                );
-                vert.add(reg, button);
-                vert.setAlignItems(Alignment.CENTER);
-                return vert;
-            }
+            VerticalLayout vert = new VerticalLayout();
+//            Button reg = new Button(getTranslation("profile.registrationGroup"));
+//            if(user.getGroup() == null) {
+//                reg.addClickListener(e ->
+//                        reg.getUI().ifPresent(ui ->
+//                                ui.navigate("registrationgroup"))
+//                );
+//                HorizontalLayout horiz = new HorizontalLayout();
+////                TextField text = new TextField();
+////                text.setPlaceholder(getTranslation("profile.enterCode"));
+////                Button button = new Button(getTranslation("profile.addUser"));
+////                button.addClickListener(
+////                    e -> {
+////                        groupService.addUser(user.getEmail(), text.getValue());
+////                        button.getUI().ifPresent(ui ->
+////                                ui.navigate("profile"));
+////                    }
+////                );
+////                horiz.add(text, button);
+//                vert.add(reg, horiz);
+//                horiz.setAlignItems(Alignment.CENTER);
+//            } else {
+//                reg.addClickListener(e ->
+//                        reg.getUI().ifPresent(ui ->
+//                                ui.navigate("registrationgroup"))
+//                );
+//                Button button = new Button(getTranslation("profile.leaveGroup"));
+//                button.addClickListener(
+//                        e -> groupService.removeUser(user)
+//                );
+//                vert.add(reg, button);
+//            }
+            vert.setAlignItems(Alignment.CENTER);
+            return vert;
         }
         return null;
     }

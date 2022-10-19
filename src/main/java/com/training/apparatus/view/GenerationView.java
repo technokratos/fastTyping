@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import javax.annotation.security.PermitAll;
 
 @PermitAll
-@Route(value = "generation", layout = MainLayout.class)
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Generation")
 public class GenerationView extends VerticalLayout {
 
@@ -51,18 +51,20 @@ public class GenerationView extends VerticalLayout {
         typingBlock = new  TypingWithCommandsBlock();
         typingBlock.setSizeFull();
 
-        generatorTypeComboBox = new ComboBox<>("Type of generation", GeneratorType.values());
+        generatorTypeComboBox = new ComboBox<>(getTranslation("generation.typeOfGeneration"), GeneratorType.values());
+        generatorTypeComboBox.setItemLabelGenerator(item -> getTranslation(item.getKey()));
         generatorTypeComboBox.setValue(GeneratorType.LETTERS);
         generatorTypeComboBox.addValueChangeListener(event -> this.regenerateText());
-        ngramCombox = new ComboBox<>("Deep of correlation", IntStream.range(1, 6).boxed().toList());
+        ngramCombox = new ComboBox<>(getTranslation("generation.deepOfCorrelation"), IntStream.range(1, 6).boxed().toList());
         ngramCombox.setValue(2);
         ngramCombox.addValueChangeListener(event -> this.regenerateText());
-        lengthTextField = new IntegerField( "Length", "Fill length of objects for generation");
+        lengthTextField = new IntegerField( getTranslation("generation.length"), 100, event -> this.regenerateText());
+        lengthTextField.setMin(MIN_LIMIT);
+        lengthTextField.setMin(MAX_LIMIT);
         lengthTextField.setValue(100);
-        lengthTextField.addValueChangeListener(event -> this.regenerateText());
 
-//        ComboBox<BaseText> baseTextComboBox = new ComboBox<>("Text style", BaseText.values());
-        Button refreshButton = new Button("Refresh");
+
+        Button refreshButton = new Button(getTranslation("generation.refresh"));
         refreshButton.addClickListener(e -> this.regenerateText());
         HorizontalLayout parametersLayout = new HorizontalLayout(generatorTypeComboBox, ngramCombox, lengthTextField);
         typingBlock.addResultListener(typingResult -> this.regenerateText());
@@ -77,24 +79,24 @@ public class GenerationView extends VerticalLayout {
     private void regenerateText() {
         GeneratorType generatorTypeComboBoxValue = generatorTypeComboBox.getValue();
         if (generatorTypeComboBoxValue == null) {
-            Notification.show("Empty of " + generatorTypeComboBox.getLabel(), 3, Notification.Position.MIDDLE);
+            Notification.show(getTranslation("view.emptyOf", generatorTypeComboBox.getLabel()), 3, Notification.Position.MIDDLE);
             return;
         }
         Integer ngram = ngramCombox.getValue();
         if (ngram == null) {
-            Notification.show("Empty of " + ngramCombox.getLabel(), 3, Notification.Position.MIDDLE);
+            Notification.show(getTranslation("view.emptyOf", ngramCombox.getLabel()), 3, Notification.Position.MIDDLE);
             return;
         }
 
         Integer length = lengthTextField.getValue();
         if (length == null) {
-            Notification.show("Empty of " + lengthTextField.getLabel(), 3, Notification.Position.MIDDLE);
+            Notification.show(getTranslation("view.emptyOf",  lengthTextField.getLabel()), 3, Notification.Position.MIDDLE);
             return;
         }
-        if (length < MIN_LIMIT || length > MAX_LIMIT) {
-            Notification.show("Exceed limits %s. It should be in range %d..%d".formatted(lengthTextField.getLabel(), MIN_LIMIT, MAX_LIMIT), 3, Notification.Position.MIDDLE);
-            return;
-        }
+//        if (length < MIN_LIMIT || length > MAX_LIMIT) {
+//            Notification.show("Exceed limits %s. It should be in range %d..%d".formatted(lengthTextField.getLabel(), MIN_LIMIT, MAX_LIMIT), 3, Notification.Position.MIDDLE);
+//            return;
+//        }
 
         GenerationParameter generationParameter = new GenerationParameter(generatorTypeComboBoxValue, ngram, BaseText.Tolstoy);
         TextGenerator textGenerator = generatorFactory.textGenerator(generationParameter);

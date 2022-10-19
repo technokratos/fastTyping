@@ -17,7 +17,7 @@ import lombok.Setter;
 public class TheoreticalView extends VerticalLayout {
 
     public TheoreticalView() {
-        Button main = new Button("Main");
+        Button main = new Button(getTranslation("login"));
         main.addClickListener(event ->
                 getUI().ifPresent(ui ->
                         ui.navigate(""))

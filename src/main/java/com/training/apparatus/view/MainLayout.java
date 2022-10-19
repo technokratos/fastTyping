@@ -25,10 +25,10 @@ public class MainLayout extends AppLayout {
     }
 
     private void createHeader() {
-        H1 logo = new H1("Training Apparatus");
+        H1 logo = new H1(getTranslation("mainView.trainingApparatus"));
         logo.addClassNames("text-l", "m-m");
 
-        Button logout = new Button("Log out", e -> securityService.logout());
+        Button logout = new Button(getTranslation("mainView.logOut"), e -> securityService.logout());
 
         HorizontalLayout header = new HorizontalLayout(
                 new DrawerToggle(),
@@ -46,17 +46,17 @@ public class MainLayout extends AppLayout {
 
     private void createDrawer() {
 
-//        RouterLink course = new RouterLink("Course", CourseView.class);
-        RouterLink generation = new RouterLink("Generation", GenerationView.class);
-//        RouterLink theoretical = new RouterLink("Theoretical", TheoreticalBackgroundView.class);
-        //RouterLink dashboard = new RouterLink("Dashboard", DashboardView.class);
-        RouterLink externalText = new RouterLink("External text", ExternalTextView.class);
-        RouterLink profile = new RouterLink("Profile", ProfileView.class);
+//        RouterLink course = new RouterLink(getTranslation("mainView.course"), CourseView.class);
+        RouterLink generation = new RouterLink(getTranslation("mainView.generation"), GenerationView.class);
+//        RouterLink theoretical = new RouterLink(getTranslation("mainView.theoretical"), TheoreticalBackgroundView.class);
+        //RouterLink dashboard = new RouterLink(getTranslation("mainView.dashboard"), DashboardView.class);
+        RouterLink externalText = new RouterLink(getTranslation("mainView.externalText"), ExternalTextView.class);
+        RouterLink profile = new RouterLink(getTranslation("mainView.profile"), ProfileView.class);
         RouterLink worker = null;
         Optional<User> user = Optional.ofNullable(securityService.getAuthUser());
         if(user.isPresent()) {
             if(user.get().getRole().name().equals("ROLE_BOSS")) {
-                 worker = new RouterLink("Worker", WorkerListView.class);
+                 worker = new RouterLink(getTranslation("mainView.worker"), WorkerListView.class);
             }
         }
         generation.setHighlightCondition(HighlightConditions.sameLocation());

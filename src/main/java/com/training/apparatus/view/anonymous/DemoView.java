@@ -16,7 +16,7 @@ public class DemoView extends VerticalLayout {
 
     public DemoView() {
         setSizeFull();
-        Button main = new Button("Main");
+        Button main = new Button(getTranslation("login"));
         main.addClickListener(event ->
                 getUI().ifPresent(ui ->
                         ui.navigate(""))

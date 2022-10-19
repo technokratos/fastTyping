@@ -20,7 +20,7 @@ public class HtmlText {
 
     public String getNextPart(Integer partLength) throws ExceedTextSizeException {
         if (cursor + partLength > text.length()) {
-            throw new ExceedTextSizeException("Position is out text");
+            throw new ExceedTextSizeException("htmlText.positionOutOfText");
         }
         cursor += partLength;
         int end = (cursor + partLength > text.length()) ? (text.length() - 1) : cursor + partLength;
@@ -33,10 +33,11 @@ public class HtmlText {
             StringBuffer buffer = new StringBuffer();
             Element body = doc.body();
             parse(body, buffer, maxLength);
-            text = buffer.toString().replaceAll("[«»]","\"").replaceAll("—","-");
+            text = buffer.toString().replaceAll("[«»]","\"").replaceAll("—","-").replaceAll("\n", "").replaceAll("\r", "");
             cursor = 0;
         } catch (IOException e) {
-            throw new ExceedTextSizeException("Problem with load text " + e.getMessage());
+            log.error("Problem with load text", e);
+            throw new ExceedTextSizeException("htmlText.problemWithLoadText");
         }
         int end = (cursor + partLength > text.length()) ? (text.length() - 1) : cursor + partLength;
         return text.substring(0, end);

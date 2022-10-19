@@ -17,9 +17,9 @@ import javax.annotation.security.PermitAll;
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | Vaadin CRM")
 public class DashboardView extends VerticalLayout {
-    private UserRepository userRepository;
-    private SecurityService securityService;
-    private ResultRepository resultRepository;
+    private final UserRepository userRepository;
+    private final SecurityService securityService;
+    private final ResultRepository resultRepository;
 
     private User user;
 
@@ -41,7 +41,7 @@ public class DashboardView extends VerticalLayout {
         user = userRepository.findByEmail(userAuth.getUsername());
     }
     private Component getContactStats() {
-        Span stats = new Span(resultRepository.countResult(user.getId()) + " attempts");
+        Span stats = new Span(getTranslation("dashboard.attempts", resultRepository.countResult(user.getId()) ));
         stats.addClassNames("text-xl", "mt-m");
         return stats;
     }

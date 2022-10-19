@@ -25,11 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Getter
 @Setter
 public class RegistrationView extends VerticalLayout  {
-    private TextField pseudonym = new TextField("Pseudonym");
-    private TextField email = new TextField("Email");
-    private PasswordField password = new PasswordField("Password");
-    private PasswordField confirmPassword = new PasswordField("Confirm password");
-    private Button registration = new Button("Registration");
+    private TextField pseudonym = new TextField(getTranslation("registration.pseudonym"));
+    private TextField email = new TextField(getTranslation("registration.email"));
+    private PasswordField password = new PasswordField(getTranslation("registration.password"));
+    private PasswordField confirmPassword = new PasswordField(getTranslation("registration.confirmPassword"));
+    private Button registration = new Button(getTranslation("login.registration"));
 
     Binder<User> binder = new Binder<>(User.class);
 
@@ -111,7 +111,8 @@ public class RegistrationView extends VerticalLayout  {
         binder.forField(email)
                 // Explicit validator instance
                 .withValidator(new EmailValidator(
-                        "This doesn't look like a valid email address"))
+                        //"This doesn't look like a valid email address"
+                        getTranslation("registration.isNotEmail")))
                 .bind(User::getEmail, User::setEmail);
 
         binder.forField(password)
@@ -119,7 +120,8 @@ public class RegistrationView extends VerticalLayout  {
                 // and an error message
                 .withValidator(
                         pass -> pass.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{4,15}$"),
-                        "Password does not meet the requirements")
+                        //"Password does not meet the requirements"
+                        getTranslation("registration.wrongPassword"))
                 .bind(User::getPassword, User::setPassword);
 
         binder.forField(confirmPassword)
@@ -127,7 +129,7 @@ public class RegistrationView extends VerticalLayout  {
                 // and an error message
                 .withValidator(
                         pass -> password.getValue().equals(confirmPassword.getValue()),
-                        "The spanks are not the same");
+                        getTranslation("registration.notTheSamePassword"));//"The spanks are not the same"
     }
 
 
