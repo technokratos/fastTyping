@@ -30,10 +30,8 @@ public class RegistrationView extends VerticalLayout  {
     private PasswordField password = new PasswordField(getTranslation("registration.password"));
     private PasswordField confirmPassword = new PasswordField(getTranslation("registration.confirmPassword"));
     private Button registration = new Button(getTranslation("login.registration"));
-
+    private final Button confidential = new Button(getTranslation("registration.confidential"));
     Binder<User> binder = new Binder<>(User.class);
-
-    //Binder<User> binder = new BeanValidationBinder<>(User.class);
 
     private User user = new User();
 
@@ -43,18 +41,14 @@ public class RegistrationView extends VerticalLayout  {
     @Autowired
     private UserRepository userRepository;
 
-    //private FormLayout formLayout = new FormLayout();
 
     public RegistrationView(){
-        //binder.bindInstanceFields(this);
+
         view();
         validate();
-        registration.addClickListener(e -> {
-            save();
-//            registration.getUI().ifPresent(ui ->
-//                    ui.navigate(""));
-        });
-        //binder.addStatusChangeListener(e -> registration.setEnabled(binder.isValid()));
+        registration.addClickListener(e -> save());
+        confidential.addClickListener(event -> registration.getUI().ifPresent(ui ->
+                ui.navigate("confidential")));
     }
 
     public void view() {
@@ -66,19 +60,9 @@ public class RegistrationView extends VerticalLayout  {
         add(
                 pseudonym, email,
                 password, confirmPassword,
-                registration
+                registration, confidential
         );
         setAlignItems(Alignment.CENTER);
-//        formLayout.setResponsiveSteps(
-//                // Use one column by default
-//                new FormLayout.ResponsiveStep("0", 1)
-//                // Use two columns, if layout's width exceeds 500px
-//                //new FormLayout.ResponsiveStep("500px", 2)
-//        );
-        // Stretch the username field over 2 columns
-        //formLayout.setColspan(username, 2);
-
-        //add(formLayout);
     }
 
     private void save() {

@@ -2,6 +2,7 @@ package com.training.apparatus.view.components;
 
 import com.training.apparatus.view.anonymous.LoginView;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Div;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -82,10 +84,8 @@ public class HtmlRenderComponent extends Div {
                     case "h4" -> parent.add(new H4(childElement.text()));
                     case "h5" -> parent.add(new H5(childElement.text()));
                     case "p" -> parent.add(new Paragraph(childElement.text()));
-                    case "i", "sup", "br", "b" -> {
-                        Text text = new Text(childElement.text());
-                        parent.add(text);
-                    }
+                    case "i", "sup", "b" -> parent.add(new Html(MessageFormat.format("<{0}>{1}</{0}>",childElement.tagName(), childElement.text())));
+                    case "br" -> parent.add(new Html("<br>"));
                     case "div" -> {
                         childComponent = new Div();
                         parse(childElement, (Div) childComponent);

@@ -32,8 +32,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                         ui.navigate("registration"))
         );
 
-//        add(new H1("Training apparatus"), login, registration);
-//
         Button about = new Button(getTranslation("login.about"), event -> registration.getUI().ifPresent(ui ->
                 ui.navigate("about")));
         Button theoretical = new Button(getTranslation("login.theoreticalDescription"), event -> registration.getUI().ifPresent(ui ->
