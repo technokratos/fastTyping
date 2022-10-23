@@ -42,7 +42,7 @@ public class FingerCommandService {
 
         Map<List<Character>, GenCommand> map = new HashMap<>();
         map.put(List.of('5', 'е' ,'п', 'и'), new GenCommand(LeftHand, First,false, Right));
-        map.put(List.of('%', 'Е' ,'П', 'И'), new GenCommand(LeftHand, First,true, RightTwice));
+        map.put(List.of('%', 'Е' ,'П', 'И'), new GenCommand(LeftHand, First,true, Right));
 
         map.put(List.of('4', 'к' ,'а', 'м'), new GenCommand(LeftHand, First, false));
         map.put(List.of(';', 'К' ,'А', 'М'), new GenCommand(LeftHand, First, true));
