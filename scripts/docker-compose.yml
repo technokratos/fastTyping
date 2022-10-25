@@ -37,6 +37,17 @@ services:
       training_net:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/TrainingApparatus
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-novcom.tech@yandex.ru}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.yandex.ru}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-smtp.yandex.ru}
+      SPRING_MAIL_FROMEMAIL: ${SPRING_MAIL_FROMEMAIL:-novcom.tech@yandex.ru}
+
+      #spring.mail.password
+      #spring.mail.username
+      #spring.mail.host
+      #spring.mail.port
+      #spring.mail.fromEmail
 #    command: tail -F anything
     command: bash -c "cd /opt/app && java -Dvaadin.productionMode=true -jar ProjectVaadin-0.0.1-SNAPSHOT.jar"
 networks:

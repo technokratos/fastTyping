@@ -1,1 +1,1 @@
-docker-compose up --force-recreate app --no-deps  --build app -d
+docker-compose up --env SPRING_MAIL_PASSWORD=<PASSWROD> --force-recreate app --no-deps  --build app -d

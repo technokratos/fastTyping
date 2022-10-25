@@ -13,7 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @Route("login")
-@PageTitle("Login | Simulator")
+@PageTitle("Login")
 public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final LoginForm login = new LoginForm();
@@ -26,10 +26,12 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         login.setAction("login");
+        login.addForgotPasswordListener(event -> registration.getUI().ifPresent(ui ->
+                ui.navigate("sendRestorePasswordEmail")));
 
         registration.addClickListener(e ->
                 registration.getUI().ifPresent(ui ->
-                        ui.navigate("registration"))
+                        ui.navigate(RegistrationView.class, "single"))
         );
 
         Button about = new Button(getTranslation("login.about"), event -> registration.getUI().ifPresent(ui ->

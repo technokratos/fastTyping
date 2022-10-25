@@ -17,7 +17,7 @@ import lombok.Setter;
 public class AboutView extends VerticalLayout {
 
     public AboutView() {
-        Button main = new Button(getTranslation("login"));
+        Button main = new Button(getTranslation("common.login"));
         main.addClickListener(event ->
                 getUI().ifPresent(ui ->
                         ui.navigate(""))

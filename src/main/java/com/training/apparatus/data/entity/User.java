@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
@@ -28,7 +29,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "Users", uniqueConstraints = { @UniqueConstraint(name = "unq_email_idx", columnNames = "email") })
 @Setter
 @Getter
 public class User implements UserDetails {
@@ -46,6 +47,8 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
+    private Boolean approvedEmail;
+
 
     @Convert(converter = SettingsConverter.class)
     @Column(columnDefinition = "varchar(10000)")
@@ -57,8 +60,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Result> results = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Task> tasks = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Group group;

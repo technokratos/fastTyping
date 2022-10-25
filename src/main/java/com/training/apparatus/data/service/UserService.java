@@ -34,11 +34,15 @@ public class UserService implements UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Transactional
+    public void saveUserWithEncodePassword(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Transactional
     public void save(User user) {
-        if(!userRepository.existsByEmail(user.getEmail())) {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-        }
+        userRepository.save(user);
     }
 
     @Override
@@ -57,7 +61,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void resetResult(String email) {
         Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email));
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().getResults().clear();
             userRepository.save(user.get());
         }
@@ -76,7 +80,12 @@ public class UserService implements UserDetailsService {
 
     public List<UserDto> findUsersDtoByGroup() {
         User user = securityService.getAuthUser();
-        return userRepository.findUserDtoByGroup(user.getGroup().getId());
+        long groupId = user.getGroup().getId();
+        return findUsersDtoByGroup(groupId);
+    }
+
+    public List<UserDto> findUsersDtoByGroup(long groupId) {
+        return userRepository.findUserDtoByGroup(groupId);
     }
 
     public List<User> updateUsers(String code) {
@@ -106,5 +115,14 @@ public class UserService implements UserDetailsService {
             auth.setSettings(settings);
         }
         return settings;
+    }
+
+    public User getUser() {
+        UserDetails auth = securityService.getAuthenticatedUser();
+        return userRepository.findByEmail(auth.getUsername());
+    }
+
+    public User findByEmail(String emailValue) {
+        return userRepository.findByEmail(emailValue);
     }
 }

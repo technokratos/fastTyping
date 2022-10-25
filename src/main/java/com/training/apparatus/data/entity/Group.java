@@ -1,5 +1,6 @@
 package com.training.apparatus.data.entity;
 
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Groups")
+@Table(name = "Groups", indexes = {@Index(name = "group_name_manager_idx", columnList = "name,manager_id", unique = true)})
 @Setter
 @Getter
 public class Group {
@@ -22,6 +23,10 @@ public class Group {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> users = new ArrayList<>();
+
+    @ManyToOne
+    @NotNull
+    private User manager;
 
     public Group() {
 

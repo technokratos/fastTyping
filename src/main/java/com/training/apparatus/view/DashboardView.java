@@ -15,7 +15,7 @@ import javax.annotation.security.PermitAll;
 
 @PermitAll
 @Route(value = "dashboard", layout = MainLayout.class)
-@PageTitle("Dashboard | Vaadin CRM")
+@PageTitle("Dashboard")
 public class DashboardView extends VerticalLayout {
     private final UserRepository userRepository;
     private final SecurityService securityService;
