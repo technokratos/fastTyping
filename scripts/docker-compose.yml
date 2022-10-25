@@ -38,10 +38,10 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/TrainingApparatus
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-novcom.tech@yandex.ru}
-      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.yandex.ru}
-      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-smtp.yandex.ru}
-      SPRING_MAIL_FROMEMAIL: ${SPRING_MAIL_FROMEMAIL:-novcom.tech@yandex.ru}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-support@fasttyping.ru}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.jino.ru}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_FROMEMAIL: ${SPRING_MAIL_FROMEMAIL:-support@fasttyping.ru}
 
       #spring.mail.password
       #spring.mail.username

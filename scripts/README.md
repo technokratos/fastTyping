@@ -4,6 +4,6 @@ mvn clean install -P production
 ```
 
 ```
-docker-compose up -d
+docker-compose up -e SPRING_MAIL_PASSWORD=<PASSWROD> -d
 ```
 
