@@ -6,12 +6,15 @@ import com.vaadin.flow.i18n.I18NProvider;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -23,8 +26,9 @@ public class EmailServiceImpl  {
 
     @Value("${fasttypping.host}")
     private String host;
+
     @Autowired
-    private JavaMailSender emailSender;
+    private Session mailSession;
 
     @Autowired
     private UserRepository userRepository;
@@ -41,18 +45,18 @@ public class EmailServiceImpl  {
     public void sendSimpleMessage(
       String to, String subject, String text) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
         try {
-            emailSender.send(message);
-        } catch (MailException e) {
-            log.error("Error in sending email ", e);
-            throw e;
+            Message message = new MimeMessage(mailSession);
+            message.setFrom(new InternetAddress(fromEmail));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(to));
+            message.setSubject(subject);
+            message.setText(text);
+            Transport.send(message);
+            log.info("Sent message to {} with subject {}", to, subject);
+        } catch (MessagingException e) {
+            log.error("Error in sending message", e);
         }
-
     }
 
     public void restorePassword(String email, Locale locale, Runnable runnable) {

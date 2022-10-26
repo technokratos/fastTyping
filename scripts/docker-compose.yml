@@ -40,9 +40,10 @@ services:
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-support@fasttyping.ru}
       SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.jino.ru}
-      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-465}
       SPRING_MAIL_FROMEMAIL: ${SPRING_MAIL_FROMEMAIL:-support@fasttyping.ru}
-
+      FASTTYPING_HOST: ${FASTTYPING_HOST:-http://fasttyping.ru}
+      #fasttypping.host=http://localhost:8080
       #spring.mail.password
       #spring.mail.username
       #spring.mail.host
