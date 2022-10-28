@@ -1,1 +1,1 @@
-docker-compose --env-file file.env --force-recreate app --no-deps  --build app up -d
+ docker-compose --env-file file.env up --force-recreate app --no-deps  --build app -d

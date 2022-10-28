@@ -54,22 +54,24 @@ public class MainLayout extends AppLayout {
         RouterLink externalText = new RouterLink(getTranslation("mainView.externalText"), ExternalTextView.class);
         RouterLink profile = new RouterLink(getTranslation("mainView.profile"), ProfileView.class);
 
+        RouterLink admin = new RouterLink(getTranslation("mainView.admin"), AdminView.class);
+        VerticalLayout layout = new VerticalLayout();
         Optional<User> optionalUser = Optional.ofNullable(securityService.getAuthUser());
         if(optionalUser.isPresent()) {
-            VerticalLayout layout = new VerticalLayout(
-                    /*listLink, course,*/ generation, externalText,/*theoretical, dashboard,*/ profile);
-            addToDrawer(layout);
+            layout.add(/*listLink, course,*/ generation, externalText,/*dashboard,*/ profile);
             User user = optionalUser.get();
-            boolean existGroups = groupService.existGroupsForTheManager(user);
-            if (existGroups) {
+
+            if (Boolean.TRUE.equals(user.getApprovedEmail())) {
                 RouterLink worker = new RouterLink(getTranslation("common.groups"), GroupedUsersView.class);
                 layout.add(worker);
             }
         } else {
-            addToDrawer(new VerticalLayout(generation, externalText,  /*dashboard,*/ profile));
+            layout.add(generation, externalText,  /*dashboard,*/ profile);
         }
         generation.setHighlightCondition(HighlightConditions.sameLocation());
-
-
+        addToDrawer(layout);
+        if (securityService.isAdmin()) {
+            layout.add(admin);
+        }
     }
 }

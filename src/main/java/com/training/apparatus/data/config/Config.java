@@ -74,6 +74,7 @@ public class Config {
                         InternetAddress.parse("support@fasttyping.ru"));
                 message.setSubject("Restart " + mainHost);
                 message.setText("Restart stand ");
+
                 Transport.send(message);
                 log.info("Send restart message");
             } catch (MessagingException e) {

@@ -5,6 +5,7 @@ import com.training.apparatus.data.repo.UserRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,15 +22,8 @@ public class SecurityService {
 
     private static final String LOGOUT_SUCCESS_URL = "/";
 
-//    public User getAuthenticatedUser() {
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        Object principal = context.getAuthentication().getPrincipal();
-//        if (principal instanceof User) {
-//            return (User) principal;
-//        }
-//        // Anonymous or no authentication.
-//        return null;
-//    }
+    @Value("${admin.user:support@fasttyping.ru}")
+    private String adminUser;
 
     public UserDetails getAuthenticatedUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -69,5 +63,9 @@ public class SecurityService {
         logoutHandler.logout(
                 VaadinServletRequest.getCurrent().getHttpServletRequest(), null,
                 null);
+    }
+
+    public boolean isAdmin() {
+        return getAuthenticatedUser().getUsername().equals(adminUser);
     }
 }

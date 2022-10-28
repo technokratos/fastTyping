@@ -43,8 +43,6 @@ public class ProfileView extends VerticalLayout {
     @Autowired
     EmailServiceImpl emailService;
 
-    @Autowired
-    private RegistrationGroupView registrationGroupView;
     User user;
 
     Button reset;
@@ -67,8 +65,6 @@ public class ProfileView extends VerticalLayout {
             Button requestEmailButton = new Button(getTranslation("profile.requestApproveEmail"));
             requestEmailButton.addClickListener(event -> emailService.approveEmail(user, getLocale(), () -> Notification.show(getTranslation("common.sentEmail"))));
             add(requestEmailButton);
-        } else {
-            add(registrationGroupView);
         }
     }
 
@@ -82,7 +78,7 @@ public class ProfileView extends VerticalLayout {
         Span hello = new Span(getTranslation("profile.pseudonym", user.getPseudonym()));
 
         speedSpan = new Span(getTranslation("profile.averageSpeed", resultRepository.avgSpeed(user.getId()).orElse(0.0)));
-        mistakesSpan = new Span(getTranslation("profile.averageMistakes", resultRepository.avgMistakes(user.getId()).orElse(0.0)));
+        mistakesSpan = new Span(getTranslation("profile.averageCorrectness", resultRepository.avgMistakes(user.getId()).orElse(0.0)));
         attemptsSpan = new Span(getTranslation("profile.attempts", resultRepository.countResult(user.getId())));
 
         vert.add(hello);
@@ -99,7 +95,7 @@ public class ProfileView extends VerticalLayout {
         reset.addClickListener(e -> {
             userService.resetResult(user.getEmail());
             speedSpan.setText(getTranslation("profile.averageSpeed", 0.0));
-            mistakesSpan.setText(getTranslation("profile.averageMistakes", 0.0));
+            mistakesSpan.setText(getTranslation("profile.averageCorrectness", 0.0));
             attemptsSpan.setText(getTranslation("profile.attempts", 0));
         });
         return reset;

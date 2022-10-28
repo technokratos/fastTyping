@@ -18,6 +18,9 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,13 +51,14 @@ public class RegistrationGroupView extends VerticalLayout {
     private String host;
     private TextField name = new TextField(getTranslation("group.name"));
     private Label link = new Label();
-    private Button generate = new Button(getTranslation("group.create"));
+    private Button addGroup = new Button(getTranslation("group.create"));
 
     Binder<Group> binder = new Binder<>(Group.class);
 
     private Group group = new Group();
 
     private User user;
+    private Set<Consumer<Group>> actions = new HashSet<>();
 
     public RegistrationGroupView() {
         //binder.bindInstanceFields(this);
@@ -74,9 +78,9 @@ public class RegistrationGroupView extends VerticalLayout {
         name.setMinWidth("450px");
         link.setMinWidth("450px");
 
-        add(span, name, link, generate);
+        add(span, name, link, addGroup);
         setAlignItems(FlexComponent.Alignment.CENTER);
-        generate.addClickListener(e -> save());
+        addGroup.addClickListener(e -> save());
     }
 
     private void save() {
@@ -90,6 +94,7 @@ public class RegistrationGroupView extends VerticalLayout {
                 group.setLink(linkValue);
                 link.setText(linkValue);
                 groupService.save(group);
+                actions.forEach(it-> it.accept(group));
             }
         } catch (ValidationException e) {
             e.printStackTrace();
@@ -108,5 +113,9 @@ public class RegistrationGroupView extends VerticalLayout {
                 .withValidator(name -> groupService.notExistGroupForTheUser(name, user), getTranslation("group.isAlreadyExist", name.getValue()))
                 .bind(Group::getName, Group::setName);
 
+    }
+
+    public void addSaveListener(Consumer<Group> action) {
+        actions.add(action);
     }
 }
